@@ -24,24 +24,27 @@ document.addEventListener('DOMContentLoaded', function() {
     loadStudents();
 });
 
-// Check teacher authentication with Firebase
+// Check teacher authentication with localStorage
 function checkTeacherAuth() {
-    firebaseAuth.onAuthStateChanged(function(user) {
-        if (user && user.email === 'aysebuz@gmail.com') {
-            // Teacher is authenticated
-            currentTeacher = {
-                email: user.email,
-                name: 'Ayşe Buz',
-                uid: user.uid
-            };
-            
-            // Update UI with teacher info
-            updateTeacherInfo();
-        } else {
-            // Not authenticated, redirect to login
-            window.location.href = 'teacher-login.html';
-        }
-    });
+    const isLoggedIn = localStorage.getItem('teacherLoggedIn');
+    const teacherEmail = localStorage.getItem('teacherEmail');
+    const teacherName = localStorage.getItem('teacherName');
+    const teacherUID = localStorage.getItem('teacherUID');
+    
+    if (isLoggedIn && teacherEmail === 'aysebuz@gmail.com') {
+        // Teacher is authenticated
+        currentTeacher = {
+            email: teacherEmail,
+            name: teacherName || 'Ayşe Buz',
+            uid: teacherUID || 'demo_uid'
+        };
+        
+        // Update UI with teacher info
+        updateTeacherInfo();
+    } else {
+        // Not authenticated, redirect to login
+        window.location.href = 'teacher-login.html';
+    }
 }
 
 // Update teacher info in UI
@@ -52,51 +55,22 @@ function updateTeacherInfo() {
     }
 }
 
-// Firebase: Load teacher content
-async function loadTeacherContent() {
+// Load teacher content from localStorage
+function loadTeacherContent() {
     try {
-        // Load from Firebase Firestore
-        const contentSnapshot = await firebaseDB.collection('content')
-            .where('teacherId', '==', currentTeacher.email)
-            .orderBy('createdAt', 'desc')
-            .get();
+        // Load from localStorage
+        const savedContent = localStorage.getItem('teacherContent');
+        if (savedContent) {
+            teacherContent = JSON.parse(savedContent);
+        }
         
-        // Reset content arrays
-        teacherContent = {
-            videos: [],
-            quizzes: [],
-            assignments: [],
-            materials: []
-        };
-        
-        // Process Firebase documents
-        contentSnapshot.forEach(doc => {
-            const content = {
-                id: doc.id,
-                ...doc.data()
-            };
-            
-            // Convert timestamp to string for localStorage
-            if (content.createdAt) {
-                content.createdAt = content.createdAt.toDate().toISOString();
-            }
-            
-            const contentKey = `${content.type}s`;
-            if (teacherContent[contentKey]) {
-                teacherContent[contentKey].push(content);
-            }
-        });
-        
-        // If no content found, load demo content
+        // Load demo content if empty
         if (teacherContent.videos.length === 0 && 
             teacherContent.quizzes.length === 0 && 
             teacherContent.assignments.length === 0 && 
             teacherContent.materials.length === 0) {
             loadDemoContent();
         }
-        
-        // Save to localStorage for offline access
-        localStorage.setItem('teacherContent', JSON.stringify(teacherContent));
         
         // Render content
         renderContent('videos', teacherContent.videos);
@@ -107,16 +81,8 @@ async function loadTeacherContent() {
     } catch (error) {
         console.error('Error loading content:', error);
         
-        // Fallback to localStorage
-        const savedContent = localStorage.getItem('teacherContent');
-        if (savedContent) {
-            teacherContent = JSON.parse(savedContent);
-        }
-        
-        // Load demo content if still empty
-        if (teacherContent.videos.length === 0) {
-            loadDemoContent();
-        }
+        // Load demo content if error
+        loadDemoContent();
         
         // Render content
         renderContent('videos', teacherContent.videos);
@@ -124,7 +90,7 @@ async function loadTeacherContent() {
         renderContent('assignments', teacherContent.assignments);
         renderContent('materials', teacherContent.materials);
         
-        showNotification('İçerik yüklenirken hata oluştu! Offline modda çalışıyor.', 'warning');
+        showNotification('İçerik yüklenirken hata oluştu! Demo içerikler yüklendi.', 'warning');
     }
 }
 
@@ -187,31 +153,25 @@ async function loadStudents() {
     }
 }
 
-// Firebase: Save content
-async function saveContent(content) {
+// Save content to localStorage
+function saveContent(content) {
     try {
         // Add teacher info to content
         const contentWithTeacher = {
             ...content,
             teacherId: currentTeacher.email,
             teacherUID: currentTeacher.uid,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            createdAt: new Date().toISOString(),
             status: 'active'
         };
-        
-        // Save to Firebase Firestore
-        const docRef = await firebaseDB.collection('content').add(contentWithTeacher);
-        
-        // Add Firebase document ID to content
-        content.id = docRef.id;
         
         // Update local array
         const contentKey = `${content.type}s`;
         if (teacherContent[contentKey]) {
-            teacherContent[contentKey].push(content);
+            teacherContent[contentKey].push(contentWithTeacher);
         }
         
-        // Save to localStorage for offline access
+        // Save to localStorage
         localStorage.setItem('teacherContent', JSON.stringify(teacherContent));
         
         showNotification(`${getTypeName(content.type)} başarıyla kaydedildi!`, 'success');
@@ -489,31 +449,22 @@ function sendContentToSelectedStudents(contentId, contentType) {
     document.querySelector('.modal').remove();
 }
 
-// Logout functionality with Firebase
-document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+// Logout functionality with localStorage
+document.getElementById('logoutBtn').addEventListener('click', (e) => {
     e.preventDefault();
     
     if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
-        try {
-            // Firebase sign out
-            await firebaseAuth.signOut();
-            
-            // Clear teacher session
-            localStorage.removeItem('teacherLoggedIn');
-            localStorage.removeItem('teacherEmail');
-            localStorage.removeItem('teacherName');
-            localStorage.removeItem('teacherUID');
-            
-            showNotification('Başarıyla çıkış yapıldı!', 'success');
-            
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1000);
-            
-        } catch (error) {
-            console.error('Logout error:', error);
-            showNotification('Çıkış yapılırken hata oluştu!', 'error');
-        }
+        // Clear teacher session
+        localStorage.removeItem('teacherLoggedIn');
+        localStorage.removeItem('teacherEmail');
+        localStorage.removeItem('teacherName');
+        localStorage.removeItem('teacherUID');
+        
+        showNotification('Başarıyla çıkış yapıldı!', 'success');
+        
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1000);
     }
 });
 
