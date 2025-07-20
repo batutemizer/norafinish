@@ -68,6 +68,17 @@ function updateTeacherInfo() {
 // Firebase: Load teacher content
 async function loadTeacherContent() {
     try {
+        // Check if currentTeacher exists
+        if (!currentTeacher || !currentTeacher.email) {
+            console.error('Current teacher not found, loading demo content');
+            loadDemoContent();
+            renderContent('videos', teacherContent.videos);
+            renderContent('quizzes', teacherContent.quizzes);
+            renderContent('assignments', teacherContent.assignments);
+            renderContent('materials', teacherContent.materials);
+            return;
+        }
+        
         // Load from Firebase Firestore
         const contentSnapshot = await firebaseDB.collection('content')
             .where('teacherId', '==', currentTeacher.email)
@@ -144,6 +155,14 @@ async function loadTeacherContent() {
 // Firebase: Load students from database
 async function loadStudents() {
     try {
+        // Check if currentTeacher exists
+        if (!currentTeacher || !currentTeacher.email) {
+            console.log('Demo mode: Loading demo students');
+            loadDemoStudents();
+            renderStudents(students);
+            return;
+        }
+        
         // Load students from Firestore
         const studentsSnapshot = await firebaseDB.collection('students').get();
         
@@ -233,6 +252,29 @@ function loadDemoStudents() {
 // Firebase: Save content with file upload
 async function saveContent(content) {
     try {
+        // Check if currentTeacher exists
+        if (!currentTeacher || !currentTeacher.email) {
+            console.error('Current teacher not found, saving to localStorage only');
+            // Save to localStorage only for demo
+            const contentWithDemo = {
+                ...content,
+                id: generateId(),
+                teacherId: 'aysebuz@gmail.com',
+                teacherUID: 'demo_teacher_uid',
+                createdAt: new Date().toISOString(),
+                status: 'active'
+            };
+            
+            const contentKey = `${content.type}s`;
+            if (teacherContent[contentKey]) {
+                teacherContent[contentKey].push(contentWithDemo);
+            }
+            
+            localStorage.setItem('teacherContent', JSON.stringify(teacherContent));
+            showNotification(`${getTypeName(content.type)} başarıyla kaydedildi! (Demo mod)`, 'success');
+            return;
+        }
+        
         let fileUrl = '';
         
         // Upload file if exists
@@ -287,6 +329,13 @@ async function sendContentToStudent(contentId, studentId, contentType) {
         
         if (!content || !student) {
             showNotification('İçerik veya öğrenci bulunamadı!', 'error');
+            return;
+        }
+        
+        // Check if currentTeacher exists
+        if (!currentTeacher || !currentTeacher.email) {
+            console.log('Demo mode: Content sent to student (localStorage only)');
+            showNotification(`${student.name} adlı öğrenciye ${getTypeName(contentType)} gönderildi! (Demo mod)`, 'success');
             return;
         }
         
@@ -930,6 +979,17 @@ function editContent(id, type) {
 
 function deleteContent(id, type) {
     if (confirm(`${getTypeName(type)}yi silmek istediğinizden emin misiniz?`)) {
+        // Check if currentTeacher exists
+        if (!currentTeacher || !currentTeacher.email) {
+            // Demo mode: delete from localStorage only
+            const contentKey = `${type}s`;
+            teacherContent[contentKey] = teacherContent[contentKey].filter(item => item.id !== id);
+            localStorage.setItem('teacherContent', JSON.stringify(teacherContent));
+            loadTeacherContent();
+            showNotification(`${getTypeName(type)} başarıyla silindi! (Demo mod)`, 'success');
+            return;
+        }
+        
         // Delete from Firebase
         firebaseDB.collection('content').doc(id).delete().then(() => {
             // Remove from local array
