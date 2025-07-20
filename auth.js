@@ -68,6 +68,26 @@ loginForm.addEventListener('submit', async (e) => {
     submitBtn.classList.add('loading');
     
     try {
+        // Demo login for testing
+        if (email === 'demo@student.com' && password === '123456') {
+            const userData = {
+                uid: 'demo_student_uid',
+                email: email,
+                name: 'Demo Öğrenci',
+                phone: '555-1234',
+                isLoggedIn: true,
+                loginTime: new Date().toISOString()
+            };
+            
+            localStorage.setItem('noraUser', JSON.stringify(userData));
+            showNotification('Demo hesabı ile giriş yapıldı!', 'success');
+            
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1000);
+            return;
+        }
+        
         // Firebase Authentication - Sign in
         const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
         const user = userCredential.user;

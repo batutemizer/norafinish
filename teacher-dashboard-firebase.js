@@ -190,9 +190,22 @@ async function loadStudents() {
             students.push(student);
         });
         
-        // If no students found, show empty state
+        // If no students found, add demo student
         if (students.length === 0) {
-            console.log('No students found in database');
+            console.log('No students found, adding demo student');
+            const demoStudent = {
+                id: 'demo_student_uid',
+                name: 'Demo Öğrenci',
+                email: 'demo@student.com',
+                phone: '555-1234',
+                registerDate: new Date().toISOString(),
+                lastActivity: new Date().toISOString(),
+                completedLessons: 5,
+                successRate: 85,
+                status: 'active',
+                courses: ['course-1']
+            };
+            students.push(demoStudent);
         }
         
         renderStudents(students);
