@@ -101,13 +101,13 @@ function initializeNavigation() {
 function initializeCharts() {
     const ctx = document.getElementById('weeklyChart');
     if (ctx) {
-        new Chart(ctx, {
+        window.weeklyChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'],
                 datasets: [{
                     label: 'Çalışma Saati',
-                    data: [2, 3, 1.5, 4, 2.5, 3.5, 1],
+                    data: [0, 0, 0, 0, 0, 0, 0], // Başlangıçta boş
                     borderColor: '#1e3a8a',
                     backgroundColor: 'rgba(30, 58, 138, 0.1)',
                     borderWidth: 3,
