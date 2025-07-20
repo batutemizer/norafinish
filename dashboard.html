@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nora Akademi - Öğrenci Paneli</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="images/logonet.png">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/logonet.png" alt="Nora Akademi Logo" class="logo-img">
+                <h2>Nora Akademi</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Ana Sayfa</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#dashboard" class="nav-link active">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#courses" class="nav-link">Derslerim</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#progress" class="nav-link">İlerleme</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#notes" class="nav-link">Notlarım</a>
+                </li>
+            </ul>
+            <div class="user-menu">
+                <div class="user-info">
+                    <img src="images/logonet.png" alt="User Avatar" class="user-avatar">
+                    <span class="user-name">Öğrenci</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="user-dropdown">
+                    <a href="#profile"><i class="fas fa-user"></i> Profil</a>
+                    <a href="#settings"><i class="fas fa-cog"></i> Ayarlar</a>
+                    <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+                </div>
+            </div>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="images/logonet.png" alt="Nora Akademi" class="sidebar-logo">
+                <h3>Öğrenci Paneli</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="sidebar-link active" data-section="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#courses" class="sidebar-link" data-section="courses">
+                    <i class="fas fa-book"></i>
+                    <span>Derslerim</span>
+                </a>
+                <a href="#progress" class="sidebar-link" data-section="progress">
+                    <i class="fas fa-chart-line"></i>
+                    <span>İlerleme</span>
+                </a>
+                <a href="#notes" class="sidebar-link" data-section="notes">
+                    <i class="fas fa-sticky-note"></i>
+                    <span>Notlarım</span>
+                </a>
+                <a href="#assignments" class="sidebar-link" data-section="assignments">
+                    <i class="fas fa-tasks"></i>
+                    <span>Ödevler</span>
+                </a>
+                <a href="#calendar" class="sidebar-link" data-section="calendar">
+                    <i class="fas fa-calendar"></i>
+                    <span>Takvim</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <h1>Hoş Geldiniz!</h1>
+                    <p>Matematik öğrenme yolculuğunuza devam edin</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>15</h3>
+                            <p>Tamamlanan Ders</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>24</h3>
+                            <p>Toplam Saat</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>85%</h3>
+                            <p>Başarı Oranı</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>7</h3>
+                            <p>Günlük Seri</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Son Aktiviteler</h3>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4>Kesirler Konusu</h4>
+                                    <p>2 saat önce tamamlandı</p>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4>Ödev Teslimi</h4>
+                                    <p>Yüzde problemleri ödevi</p>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4>Quiz Tamamlandı</h4>
+                                    <p>Geometri quizi - %90 başarı</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h3>Bugünkü Hedefler</h3>
+                        <div class="goals-list">
+                            <div class="goal-item">
+                                <div class="goal-checkbox">
+                                    <input type="checkbox" id="goal1">
+                                    <label for="goal1"></label>
+                                </div>
+                                <div class="goal-content">
+                                    <h4>Yüzde konusu videosu izle</h4>
+                                    <p>45 dakika</p>
+                                </div>
+                            </div>
+                            <div class="goal-item">
+                                <div class="goal-checkbox">
+                                    <input type="checkbox" id="goal2">
+                                    <label for="goal2"></label>
+                                </div>
+                                <div class="goal-content">
+                                    <h4>5 soru çöz</h4>
+                                    <p>30 dakika</p>
+                                </div>
+                            </div>
+                            <div class="goal-item">
+                                <div class="goal-checkbox">
+                                    <input type="checkbox" id="goal3">
+                                    <label for="goal3"></label>
+                                </div>
+                                <div class="goal-content">
+                                    <h4>Notları gözden geçir</h4>
+                                    <p>20 dakika</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Courses Section -->
+            <section id="courses" class="content-section">
+                <div class="section-header">
+                    <h1>Derslerim</h1>
+                    <p>Kayıtlı olduğunuz dersler ve ilerleme durumunuz</p>
+                </div>
+
+                <div class="courses-grid">
+                    <div class="course-card">
+                        <div class="course-header">
+                            <h3>Sayılar ve İşlemler</h3>
+                            <span class="course-status completed">Tamamlandı</span>
+                        </div>
+                        <div class="course-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%"></div>
+                            </div>
+                            <span>100% tamamlandı</span>
+                        </div>
+                        <div class="course-stats">
+                            <div class="stat">
+                                <i class="fas fa-video"></i>
+                                <span>8 video</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-clock"></i>
+                                <span>6 saat</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-star"></i>
+                                <span>95%</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary">Tekrar İzle</button>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-header">
+                            <h3>Kesirler</h3>
+                            <span class="course-status in-progress">Devam Ediyor</span>
+                        </div>
+                        <div class="course-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%"></div>
+                            </div>
+                            <span>75% tamamlandı</span>
+                        </div>
+                        <div class="course-stats">
+                            <div class="stat">
+                                <i class="fas fa-video"></i>
+                                <span>6/8 video</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-clock"></i>
+                                <span>4.5 saat</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-star"></i>
+                                <span>88%</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary">Devam Et</button>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-header">
+                            <h3>Yüzde Problemleri</h3>
+                            <span class="course-status not-started">Başlanmadı</span>
+                        </div>
+                        <div class="course-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span>0% tamamlandı</span>
+                        </div>
+                        <div class="course-stats">
+                            <div class="stat">
+                                <i class="fas fa-video"></i>
+                                <span>10 video</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-clock"></i>
+                                <span>8 saat</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-star"></i>
+                                <span>-</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary">Başla</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Progress Section -->
+            <section id="progress" class="content-section">
+                <div class="section-header">
+                    <h1>İlerleme Raporu</h1>
+                    <p>Öğrenme yolculuğunuzun detaylı analizi</p>
+                </div>
+
+                <div class="progress-grid">
+                    <div class="progress-card">
+                        <h3>Haftalık İlerleme</h3>
+                        <div class="chart-container">
+                            <canvas id="weeklyChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="progress-card">
+                        <h3>Konu Bazlı Başarı</h3>
+                        <div class="topic-progress">
+                            <div class="topic-item">
+                                <div class="topic-info">
+                                    <h4>Sayılar</h4>
+                                    <span>95%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 95%"></div>
+                                </div>
+                            </div>
+                            <div class="topic-item">
+                                <div class="topic-info">
+                                    <h4>Kesirler</h4>
+                                    <span>88%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 88%"></div>
+                                </div>
+                            </div>
+                            <div class="topic-item">
+                                <div class="topic-info">
+                                    <h4>Yüzde</h4>
+                                    <span>0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Notes Section -->
+            <section id="notes" class="content-section">
+                <div class="section-header">
+                    <h1>Notlarım</h1>
+                    <p>Önemli notlarınızı burada saklayın</p>
+                    <button class="btn btn-primary" id="addNoteBtn">
+                        <i class="fas fa-plus"></i> Yeni Not
+                    </button>
+                </div>
+
+                <div class="notes-grid" id="notesGrid">
+                    <!-- Notes will be dynamically added here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add Note Modal -->
+    <div class="modal" id="noteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Yeni Not Ekle</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="noteForm">
+                <div class="form-group">
+                    <label>Başlık</label>
+                    <input type="text" id="noteTitle" placeholder="Not başlığı" required>
+                </div>
+                <div class="form-group">
+                    <label>İçerik</label>
+                    <textarea id="noteContent" placeholder="Not içeriğinizi yazın..." rows="6" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <select id="noteCategory">
+                        <option value="general">Genel</option>
+                        <option value="formulas">Formüller</option>
+                        <option value="examples">Örnekler</option>
+                        <option value="tips">İpuçları</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelNote">İptal</button>
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html> 
