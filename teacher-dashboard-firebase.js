@@ -86,10 +86,9 @@ async function loadTeacherContent() {
             return;
         }
         
-        // Load from Firebase Firestore
+        // Load from Firebase Firestore (simplified query to avoid index requirement)
         const contentSnapshot = await firebaseDB.collection('content')
             .where('teacherId', '==', currentTeacher.email)
-            .orderBy('createdAt', 'desc')
             .get();
         
         // Reset content arrays
@@ -256,12 +255,12 @@ function loadDemoStudents() {
     ];
 }
 
-// Firebase: Save content with file upload
+// Firebase: Save content with file upload (CORS-safe version)
 async function saveContent(content) {
     try {
         // Check if currentTeacher exists
         if (!currentTeacher || !currentTeacher.email) {
-            console.error('Current teacher not found, saving to localStorage only');
+            console.log('Demo mode: Saving to localStorage only');
             // Save to localStorage only for demo
             const contentWithDemo = {
                 ...content,
@@ -272,60 +271,119 @@ async function saveContent(content) {
                 status: 'active'
             };
             
-            const contentKey = `${content.type}s`;
-            if (teacherContent[contentKey]) {
-                teacherContent[contentKey].push(contentWithDemo);
+            // Handle file for demo mode
+            if (content.file) {
+                contentWithDemo.fileName = content.file.name;
+                contentWithDemo.fileSize = content.file.size;
+                contentWithDemo.fileType = content.file.type;
+                // Store file as base64 for demo
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    contentWithDemo.fileData = e.target.result;
+                    saveContentToLocalStorage(contentWithDemo);
+                };
+                reader.readAsDataURL(content.file);
+                return;
+            } else {
+                saveContentToLocalStorage(contentWithDemo);
             }
-            
-            localStorage.setItem('teacherContent', JSON.stringify(teacherContent));
-            showNotification(`${getTypeName(content.type)} başarıyla kaydedildi! (Demo mod)`, 'success');
             return;
         }
         
         let fileUrl = '';
+        let fileData = '';
         
-        // Upload file if exists
+        // Handle file upload (with CORS fallback)
         if (content.file) {
-            const fileRef = firebaseStorage.ref(`content/${currentTeacher.uid}/${Date.now()}_${content.file.name}`);
-            const snapshot = await fileRef.put(content.file);
-            fileUrl = await snapshot.ref.getDownloadURL();
+            try {
+                // Try Firebase Storage first
+                const fileRef = firebaseStorage.ref(`content/${currentTeacher.uid}/${Date.now()}_${content.file.name}`);
+                const snapshot = await fileRef.put(content.file);
+                fileUrl = await snapshot.ref.getDownloadURL();
+            } catch (storageError) {
+                console.warn('Firebase Storage failed, using base64 fallback:', storageError);
+                // Fallback to base64 storage
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    fileData = e.target.result;
+                    saveContentWithFileData(content, fileData, '');
+                };
+                reader.readAsDataURL(content.file);
+                return; // Exit early, will continue in reader.onload
+            }
         }
         
-        // Add teacher info to content
-        const contentWithTeacher = {
-            ...content,
-            fileUrl: fileUrl,
-            teacherId: currentTeacher.email,
-            teacherUID: currentTeacher.uid,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            status: 'active'
-        };
-        
-        // Remove file object before saving to Firestore
-        delete contentWithTeacher.file;
-        
-        // Save to Firebase Firestore
-        const docRef = await firebaseDB.collection('content').add(contentWithTeacher);
-        
-        // Add Firebase document ID to content
-        content.id = docRef.id;
-        content.fileUrl = fileUrl;
-        
-        // Update local array
-        const contentKey = `${content.type}s`;
-        if (teacherContent[contentKey]) {
-            teacherContent[contentKey].push(content);
-        }
-        
-        // Save to localStorage for offline access
-        localStorage.setItem('teacherContent', JSON.stringify(teacherContent));
-        
-        showNotification(`${getTypeName(content.type)} başarıyla kaydedildi!`, 'success');
+        // Save content with file URL
+        saveContentWithFileData(content, fileData, fileUrl);
         
     } catch (error) {
         console.error('Error saving content:', error);
         showNotification('İçerik kaydedilirken hata oluştu!', 'error');
     }
+}
+
+// Helper function to save content with file data
+async function saveContentWithFileData(content, fileData, fileUrl) {
+    try {
+        // Add teacher info to content
+        const contentWithTeacher = {
+            ...content,
+            fileUrl: fileUrl,
+            fileData: fileData,
+            fileName: content.file ? content.file.name : '',
+            fileSize: content.file ? content.file.size : 0,
+            fileType: content.file ? content.file.type : '',
+            teacherId: currentTeacher ? currentTeacher.email : 'aysebuz@gmail.com',
+            teacherUID: currentTeacher ? currentTeacher.uid : 'demo_teacher_uid',
+            createdAt: new Date().toISOString(),
+            status: 'active'
+        };
+        
+        // Remove file object before saving
+        delete contentWithTeacher.file;
+        
+        if (currentTeacher && currentTeacher.email !== 'aysebuz@gmail.com') {
+            // Save to Firebase Firestore
+            const docRef = await firebaseDB.collection('content').add(contentWithTeacher);
+            contentWithTeacher.id = docRef.id;
+        } else {
+            // Demo mode - generate local ID
+            contentWithTeacher.id = generateId();
+        }
+        
+        // Update local array
+        const contentKey = `${content.type}s`;
+        if (teacherContent[contentKey]) {
+            teacherContent[contentKey].unshift(contentWithTeacher);
+        }
+        
+        // Save to localStorage for offline access
+        localStorage.setItem('teacherContent', JSON.stringify(teacherContent));
+        
+        // Update UI
+        renderContent(content.type, teacherContent[contentKey]);
+        
+        showNotification(`${getTypeName(content.type)} başarıyla kaydedildi!`, 'success');
+        
+    } catch (error) {
+        console.error('Error saving content with file data:', error);
+        showNotification('İçerik kaydedilirken hata oluştu!', 'error');
+    }
+}
+
+// Helper function to save content to localStorage
+function saveContentToLocalStorage(contentWithDemo) {
+    const contentKey = `${contentWithDemo.type}s`;
+    if (teacherContent[contentKey]) {
+        teacherContent[contentKey].unshift(contentWithDemo);
+    }
+    
+    localStorage.setItem('teacherContent', JSON.stringify(teacherContent));
+    
+    // Update UI
+    renderContent(contentWithDemo.type, teacherContent[contentKey]);
+    
+    showNotification(`${getTypeName(contentWithDemo.type)} başarıyla kaydedildi! (Demo mod)`, 'success');
 }
 
 // Firebase: Send content to specific student
