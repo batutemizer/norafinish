@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nora Akademi - Öğretmen Paneli</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="teacher-dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="images/logonet.png">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/logonet.png" alt="Nora Akademi Logo" class="logo-img">
+                <h2>Nora Akademi</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Ana Sayfa</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#dashboard" class="nav-link active">Öğretmen Paneli</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#courses" class="nav-link">Derslerim</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#students" class="nav-link">Öğrencilerim</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#analytics" class="nav-link">Analitik</a>
+                </li>
+            </ul>
+            <div class="user-menu">
+                <div class="user-info">
+                    <img src="images/logonet.png" alt="Teacher Avatar" class="user-avatar">
+                    <span class="user-name">Öğretmen</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="user-dropdown">
+                    <a href="#profile"><i class="fas fa-user"></i> Profil</a>
+                    <a href="#settings"><i class="fas fa-cog"></i> Ayarlar</a>
+                    <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+                </div>
+            </div>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="images/logonet.png" alt="Nora Akademi" class="sidebar-logo">
+                <h3>Öğretmen Paneli</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="sidebar-link active" data-section="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#courses" class="sidebar-link" data-section="courses">
+                    <i class="fas fa-book"></i>
+                    <span>Derslerim</span>
+                </a>
+                <a href="#content" class="sidebar-link" data-section="content">
+                    <i class="fas fa-upload"></i>
+                    <span>İçerik Yönetimi</span>
+                </a>
+                <a href="#students" class="sidebar-link" data-section="students">
+                    <i class="fas fa-users"></i>
+                    <span>Öğrencilerim</span>
+                </a>
+                <a href="#assignments" class="sidebar-link" data-section="assignments">
+                    <i class="fas fa-tasks"></i>
+                    <span>Ödevler</span>
+                </a>
+                <a href="#analytics" class="sidebar-link" data-section="analytics">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analitik</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <h1>Hoş Geldiniz, Öğretmen!</h1>
+                    <p>Eğitim içeriklerinizi yönetin ve öğrenci ilerlemelerini takip edin</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>24</h3>
+                            <p>Yüklenen Video</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>156</h3>
+                            <p>Aktif Öğrenci</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>4.8</h3>
+                            <p>Ortalama Puan</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>18</h3>
+                            <p>Toplam Saat</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Hızlı İşlemler</h3>
+                        <div class="quick-actions">
+                            <button class="action-btn" onclick="openUploadModal('video')">
+                                <i class="fas fa-video"></i>
+                                <span>Video Yükle</span>
+                            </button>
+                            <button class="action-btn" onclick="openUploadModal('quiz')">
+                                <i class="fas fa-question-circle"></i>
+                                <span>Quiz Oluştur</span>
+                            </button>
+                            <button class="action-btn" onclick="openUploadModal('assignment')">
+                                <i class="fas fa-file-alt"></i>
+                                <span>Ödev Ekle</span>
+                            </button>
+                            <button class="action-btn" onclick="openUploadModal('material')">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>Materyal Yükle</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h3>Son Aktiviteler</h3>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-video"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4>Yeni Video Yüklendi</h4>
+                                    <p>Kesirlerde Çarpma - 2 saat önce</p>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4>Quiz Tamamlandı</h4>
+                                    <p>25 öğrenci quiz'i tamamladı</p>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4>Yeni Öğrenci</h4>
+                                    <p>Ahmet Yılmaz kayıt oldu</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Content Management Section -->
+            <section id="content" class="content-section">
+                <div class="section-header">
+                    <h1>İçerik Yönetimi</h1>
+                    <p>Video, quiz ve ödevlerinizi yönetin</p>
+                </div>
+
+                <!-- Content Tabs -->
+                <div class="content-tabs">
+                    <button class="tab-btn active" data-tab="videos">
+                        <i class="fas fa-video"></i> Videolar
+                    </button>
+                    <button class="tab-btn" data-tab="quizzes">
+                        <i class="fas fa-question-circle"></i> Quizler
+                    </button>
+                    <button class="tab-btn" data-tab="assignments">
+                        <i class="fas fa-file-alt"></i> Ödevler
+                    </button>
+                    <button class="tab-btn" data-tab="materials">
+                        <i class="fas fa-file-pdf"></i> Materyaller
+                    </button>
+                </div>
+
+                <!-- Videos Tab -->
+                <div id="videos" class="tab-content active">
+                    <div class="content-header">
+                        <h3>Video Yönetimi</h3>
+                        <button class="btn btn-primary" onclick="openUploadModal('video')">
+                            <i class="fas fa-plus"></i> Yeni Video
+                        </button>
+                    </div>
+                    <div class="content-grid" id="videosGrid">
+                        <!-- Videos will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Quizzes Tab -->
+                <div id="quizzes" class="tab-content">
+                    <div class="content-header">
+                        <h3>Quiz Yönetimi</h3>
+                        <button class="btn btn-primary" onclick="openUploadModal('quiz')">
+                            <i class="fas fa-plus"></i> Yeni Quiz
+                        </button>
+                    </div>
+                    <div class="content-grid" id="quizzesGrid">
+                        <!-- Quizzes will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Assignments Tab -->
+                <div id="assignments" class="tab-content">
+                    <div class="content-header">
+                        <h3>Ödev Yönetimi</h3>
+                        <button class="btn btn-primary" onclick="openUploadModal('assignment')">
+                            <i class="fas fa-plus"></i> Yeni Ödev
+                        </button>
+                    </div>
+                    <div class="content-grid" id="assignmentsGrid">
+                        <!-- Assignments will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Materials Tab -->
+                <div id="materials" class="tab-content">
+                    <div class="content-header">
+                        <h3>Materyal Yönetimi</h3>
+                        <button class="btn btn-primary" onclick="openUploadModal('material')">
+                            <i class="fas fa-plus"></i> Yeni Materyal
+                        </button>
+                    </div>
+                    <div class="content-grid" id="materialsGrid">
+                        <!-- Materials will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Students Section -->
+            <section id="students" class="content-section">
+                <div class="section-header">
+                    <h1>Öğrenci Yönetimi</h1>
+                    <p>Öğrencilerinizi takip edin ve yönetin</p>
+                </div>
+
+                <div class="students-container">
+                    <div class="students-filters">
+                        <input type="text" placeholder="Öğrenci ara..." id="studentSearch">
+                        <select id="courseFilter">
+                            <option value="">Tüm Dersler</option>
+                            <option value="course-1">Sayılar ve İşlemler</option>
+                            <option value="course-2">Kesirler</option>
+                            <option value="course-3">Yüzde Problemleri</option>
+                        </select>
+                    </div>
+
+                    <div class="students-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Öğrenci</th>
+                                    <th>Email</th>
+                                    <th>Kayıt Tarihi</th>
+                                    <th>Tamamlanan Ders</th>
+                                    <th>Başarı Oranı</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody">
+                                <!-- Students will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section id="analytics" class="content-section">
+                <div class="section-header">
+                    <h1>Analitik ve Raporlar</h1>
+                    <p>Öğrenci performansını ve ders istatistiklerini inceleyin</p>
+                </div>
+
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3>Öğrenci İlerleme Grafiği</h3>
+                        <div class="chart-container">
+                            <canvas id="studentProgressChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h3>Ders Başarı Oranları</h3>
+                        <div class="chart-container">
+                            <canvas id="courseSuccessChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h3>Aylık Aktif Öğrenci</h3>
+                        <div class="chart-container">
+                            <canvas id="monthlyStudentsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h3>En Popüler İçerikler</h3>
+                        <div class="popular-content">
+                            <!-- Popular content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="uploadModalTitle">İçerik Yükle</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label>Başlık</label>
+                    <input type="text" id="contentTitle" placeholder="İçerik başlığı" required>
+                </div>
+                <div class="form-group">
+                    <label>Açıklama</label>
+                    <textarea id="contentDescription" placeholder="İçerik açıklaması" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Ders</label>
+                    <select id="contentCourse" required>
+                        <option value="">Ders seçin</option>
+                        <option value="course-1">Sayılar ve İşlemler</option>
+                        <option value="course-2">Kesirler</option>
+                        <option value="course-3">Yüzde Problemleri</option>
+                    </select>
+                </div>
+                
+                <!-- Video specific fields -->
+                <div id="videoFields" class="content-fields" style="display: none;">
+                    <div class="form-group">
+                        <label>Video Dosyası</label>
+                        <input type="file" id="videoFile" accept="video/*">
+                    </div>
+                    <div class="form-group">
+                        <label>Süre (dakika)</label>
+                        <input type="number" id="videoDuration" placeholder="Video süresi">
+                    </div>
+                </div>
+
+                <!-- Quiz specific fields -->
+                <div id="quizFields" class="content-fields" style="display: none;">
+                    <div class="form-group">
+                        <label>Soru Sayısı</label>
+                        <input type="number" id="quizQuestions" placeholder="Toplam soru sayısı">
+                    </div>
+                    <div class="form-group">
+                        <label>Süre (dakika)</label>
+                        <input type="number" id="quizDuration" placeholder="Quiz süresi">
+                    </div>
+                </div>
+
+                <!-- Assignment specific fields -->
+                <div id="assignmentFields" class="content-fields" style="display: none;">
+                    <div class="form-group">
+                        <label>Ödev Dosyası</label>
+                        <input type="file" id="assignmentFile" accept=".pdf,.doc,.docx">
+                    </div>
+                    <div class="form-group">
+                        <label>Son Teslim Tarihi</label>
+                        <input type="datetime-local" id="assignmentDeadline">
+                    </div>
+                </div>
+
+                <!-- Material specific fields -->
+                <div id="materialFields" class="content-fields" style="display: none;">
+                    <div class="form-group">
+                        <label>Materyal Dosyası</label>
+                        <input type="file" id="materialFile" accept=".pdf,.doc,.docx,.ppt,.pptx">
+                    </div>
+                    <div class="form-group">
+                        <label>Dosya Türü</label>
+                        <select id="materialType">
+                            <option value="pdf">PDF</option>
+                            <option value="document">Doküman</option>
+                            <option value="presentation">Sunum</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelUpload">İptal</button>
+                    <button type="submit" class="btn btn-primary">Yükle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="teacher-dashboard.js"></script>
+</body>
+</html> 
