@@ -123,6 +123,9 @@ function renderStudentContent() {
     
     // Update pending content
     updatePendingContent();
+    
+    // Update progress sections
+    updateProgressSections();
 }
 
 // Render content in specific section
@@ -436,6 +439,124 @@ function getTimeAgo(dateString) {
     } else {
         return 'Az önce';
     }
+}
+
+// Update progress sections
+function updateProgressSections() {
+    updateContentStatusGrid();
+    updateContentTypeDistribution();
+}
+
+// Update content status grid
+function updateContentStatusGrid() {
+    const statusGrid = document.getElementById('contentStatusGrid');
+    if (!statusGrid) return;
+    
+    const allContent = [
+        ...studentContent.videos,
+        ...studentContent.quizzes,
+        ...studentContent.assignments,
+        ...studentContent.materials
+    ];
+    
+    if (allContent.length === 0) {
+        statusGrid.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-chart-bar"></i>
+                <h3>Henüz içerik yok</h3>
+                <p>Öğretmeninizden içerik geldiğinde burada görünecek</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const completed = allContent.filter(content => content.completed).length;
+    const pending = allContent.filter(content => !content.completed).length;
+    const total = allContent.length;
+    
+    statusGrid.innerHTML = `
+        <div class="status-item completed">
+            <div class="status-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="status-info">
+                <h4>Tamamlanan</h4>
+                <span>${completed} / ${total}</span>
+            </div>
+        </div>
+        <div class="status-item pending">
+            <div class="status-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="status-info">
+                <h4>Bekleyen</h4>
+                <span>${pending} / ${total}</span>
+            </div>
+        </div>
+    `;
+}
+
+// Update content type distribution
+function updateContentTypeDistribution() {
+    const distributionGrid = document.getElementById('contentTypeDistribution');
+    if (!distributionGrid) return;
+    
+    const videoCount = studentContent.videos.length;
+    const quizCount = studentContent.quizzes.length;
+    const assignmentCount = studentContent.assignments.length;
+    const materialCount = studentContent.materials.length;
+    
+    const total = videoCount + quizCount + assignmentCount + materialCount;
+    
+    if (total === 0) {
+        distributionGrid.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-pie-chart"></i>
+                <h3>Henüz içerik yok</h3>
+                <p>Öğretmeninizden içerik geldiğinde burada görünecek</p>
+            </div>
+        `;
+        return;
+    }
+    
+    distributionGrid.innerHTML = `
+        <div class="distribution-item">
+            <div class="distribution-icon video">
+                <i class="fas fa-play-circle"></i>
+            </div>
+            <div class="distribution-info">
+                <h4>Videolar</h4>
+                <span>${videoCount} (${Math.round((videoCount / total) * 100)}%)</span>
+            </div>
+        </div>
+        <div class="distribution-item">
+            <div class="distribution-icon quiz">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <div class="distribution-info">
+                <h4>Quiz'ler</h4>
+                <span>${quizCount} (${Math.round((quizCount / total) * 100)}%)</span>
+            </div>
+        </div>
+        <div class="distribution-item">
+            <div class="distribution-icon assignment">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="distribution-info">
+                <h4>Ödevler</h4>
+                <span>${assignmentCount} (${Math.round((assignmentCount / total) * 100)}%)</span>
+            </div>
+        </div>
+        <div class="distribution-item">
+            <div class="distribution-icon material">
+                <i class="fas fa-file-pdf"></i>
+            </div>
+            <div class="distribution-info">
+                <h4>Materyaller</h4>
+                <span>${materialCount} (${Math.round((materialCount / total) * 100)}%)</span>
+            </div>
+        </div>
+    `;
 }
 
 // Initialize content sections

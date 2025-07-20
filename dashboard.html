@@ -191,41 +191,23 @@
 
                 <div class="progress-grid">
                     <div class="progress-card">
-                        <h3>Haftalık İlerleme</h3>
-                        <div class="chart-container">
-                            <canvas id="weeklyChart"></canvas>
+                        <h3>İçerik Durumu</h3>
+                        <div class="content-status-grid" id="contentStatusGrid">
+                            <div class="empty-state">
+                                <i class="fas fa-chart-bar"></i>
+                                <h3>Henüz içerik yok</h3>
+                                <p>Öğretmeninizden içerik geldiğinde burada görünecek</p>
+                            </div>
                         </div>
                     </div>
 
                     <div class="progress-card">
-                        <h3>Konu Bazlı Başarı</h3>
-                        <div class="topic-progress">
-                            <div class="topic-item">
-                                <div class="topic-info">
-                                    <h4>Sayılar</h4>
-                                    <span>95%</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 95%"></div>
-                                </div>
-                            </div>
-                            <div class="topic-item">
-                                <div class="topic-info">
-                                    <h4>Kesirler</h4>
-                                    <span>88%</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 88%"></div>
-                                </div>
-                            </div>
-                            <div class="topic-item">
-                                <div class="topic-info">
-                                    <h4>Yüzde</h4>
-                                    <span>0%</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 0%"></div>
-                                </div>
+                        <h3>İçerik Türü Dağılımı</h3>
+                        <div class="content-type-distribution" id="contentTypeDistribution">
+                            <div class="empty-state">
+                                <i class="fas fa-pie-chart"></i>
+                                <h3>Henüz içerik yok</h3>
+                                <p>Öğretmeninizden içerik geldiğinde burada görünecek</p>
                             </div>
                         </div>
                     </div>
@@ -282,9 +264,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="demo-data.js"></script>
-    <script src="progress-system.js"></script>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
