@@ -115,8 +115,14 @@ function renderStudentContent() {
     // Render materials in notes section
     renderContentSection('materials', 'notesGrid', 'material');
     
+    // Update dashboard stats
+    updateDashboardStats();
+    
     // Update recent activities
     updateRecentActivities();
+    
+    // Update pending content
+    updatePendingContent();
 }
 
 // Render content in specific section
@@ -239,9 +245,66 @@ async function markAsCompleted(contentId, contentType) {
     }
 }
 
+// Update dashboard statistics
+function updateDashboardStats() {
+    const allContent = [
+        ...studentContent.videos,
+        ...studentContent.quizzes,
+        ...studentContent.assignments,
+        ...studentContent.materials
+    ];
+    
+    const completedContent = allContent.filter(content => content.completed);
+    const totalContent = allContent.length;
+    const successRate = totalContent > 0 ? Math.round((completedContent.length / totalContent) * 100) : 0;
+    
+    // Update stats in DOM
+    const completedLessonsElement = document.getElementById('completedLessons');
+    const totalContentElement = document.getElementById('totalContent');
+    const successRateElement = document.getElementById('successRate');
+    const activeStreakElement = document.getElementById('activeStreak');
+    
+    if (completedLessonsElement) completedLessonsElement.textContent = completedContent.length;
+    if (totalContentElement) totalContentElement.textContent = totalContent;
+    if (successRateElement) successRateElement.textContent = successRate + '%';
+    
+    // Calculate active streak (consecutive days with activity)
+    const activeStreak = calculateActiveStreak(allContent);
+    if (activeStreakElement) activeStreakElement.textContent = activeStreak;
+}
+
+// Calculate active streak
+function calculateActiveStreak(allContent) {
+    if (allContent.length === 0) return 0;
+    
+    const today = new Date();
+    const todayStr = today.toDateString();
+    let streak = 0;
+    let currentDate = new Date();
+    
+    // Check last 30 days for activity
+    for (let i = 0; i < 30; i++) {
+        const dateStr = currentDate.toDateString();
+        const hasActivity = allContent.some(content => {
+            const contentDate = new Date(content.sentAt || content.completedAt);
+            return contentDate.toDateString() === dateStr;
+        });
+        
+        if (hasActivity) {
+            streak++;
+        } else {
+            break;
+        }
+        
+        currentDate.setDate(currentDate.getDate() - 1);
+    }
+    
+    return streak;
+}
+
 // Update recent activities
 function updateRecentActivities() {
-    const activityList = document.querySelector('.activity-list');
+    const activityList = document.getElementById('activityList');
     if (!activityList) return;
     
     // Get recent activities from content
@@ -250,13 +313,23 @@ function updateRecentActivities() {
         ...studentContent.quizzes,
         ...studentContent.assignments,
         ...studentContent.materials
-    ].sort((a, b) => new Date(b.sentAt) - new Date(a.sentAt)).slice(0, 3);
+    ].sort((a, b) => new Date(b.sentAt) - new Date(a.sentAt)).slice(0, 5);
     
-    if (allContent.length === 0) return;
+    if (allContent.length === 0) {
+        activityList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-clock"></i>
+                <h3>Henüz aktivite yok</h3>
+                <p>Öğretmeninizden içerik geldiğinde burada görünecek</p>
+            </div>
+        `;
+        return;
+    }
     
     const recentActivities = allContent.map(content => {
-        const icon = content.completed ? 'fa-check' : 'fa-clock';
-        const text = content.completed ? 'tamamlandı' : 'gönderildi';
+        const icon = getActivityIcon(content.contentType, content.completed);
+        const text = getActivityText(content);
+        const timeAgo = getTimeAgo(content.sentAt);
         
         return `
             <div class="activity-item">
@@ -265,15 +338,104 @@ function updateRecentActivities() {
                 </div>
                 <div class="activity-content">
                     <h4>${content.contentTitle}</h4>
-                    <p>${text}</p>
+                    <p>${text} - ${timeAgo}</p>
                 </div>
             </div>
         `;
     }).join('');
     
-    // Add to existing activities or replace
-    const existingActivities = activityList.innerHTML;
-    activityList.innerHTML = recentActivities + existingActivities;
+    activityList.innerHTML = recentActivities;
+}
+
+// Update pending content
+function updatePendingContent() {
+    const pendingList = document.getElementById('pendingContentList');
+    if (!pendingList) return;
+    
+    const pendingContent = [
+        ...studentContent.videos,
+        ...studentContent.quizzes,
+        ...studentContent.assignments,
+        ...studentContent.materials
+    ].filter(content => !content.completed).slice(0, 3);
+    
+    if (pendingContent.length === 0) {
+        pendingList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <h3>Bekleyen içerik yok</h3>
+                <p>Öğretmeninizden yeni içerik geldiğinde burada görünecek</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const pendingItems = pendingContent.map(content => {
+        const icon = getContentIcon(content.contentType);
+        const typeName = getContentTypeName(content.contentType);
+        
+        return `
+            <div class="pending-item">
+                <div class="pending-icon">
+                    <i class="fas ${icon}"></i>
+                </div>
+                <div class="pending-content">
+                    <h4>${content.contentTitle}</h4>
+                    <p>${typeName} - ${getTimeAgo(content.sentAt)}</p>
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="viewContent('${content.id}', '${content.contentType}')">
+                    Görüntüle
+                </button>
+            </div>
+        `;
+    }).join('');
+    
+    pendingList.innerHTML = pendingItems;
+}
+
+// Helper functions for activities
+function getActivityIcon(contentType, completed) {
+    if (completed) {
+        return 'fa-check-circle';
+    }
+    
+    const icons = {
+        video: 'fa-play-circle',
+        quiz: 'fa-question-circle',
+        assignment: 'fa-file-alt',
+        material: 'fa-file-pdf'
+    };
+    return icons[contentType] || 'fa-file';
+}
+
+function getActivityText(content) {
+    if (content.completed) {
+        return 'tamamlandı';
+    }
+    
+    const typeNames = {
+        video: 'video gönderildi',
+        quiz: 'quiz gönderildi',
+        assignment: 'ödev gönderildi',
+        material: 'materyal gönderildi'
+    };
+    return typeNames[content.contentType] || 'içerik gönderildi';
+}
+
+function getTimeAgo(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now - date;
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInHours / 24);
+    
+    if (diffInDays > 0) {
+        return `${diffInDays} gün önce`;
+    } else if (diffInHours > 0) {
+        return `${diffInHours} saat önce`;
+    } else {
+        return 'Az önce';
+    }
 }
 
 // Initialize content sections

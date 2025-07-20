@@ -107,8 +107,8 @@
                             <i class="fas fa-play-circle"></i>
                         </div>
                         <div class="stat-content">
-                            <h3>15</h3>
-                            <p>Tamamlanan Ders</p>
+                            <h3 id="completedLessons">0</h3>
+                            <p>Tamamlanan İçerik</p>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -116,8 +116,8 @@
                             <i class="fas fa-clock"></i>
                         </div>
                         <div class="stat-content">
-                            <h3>24</h3>
-                            <p>Toplam Saat</p>
+                            <h3 id="totalContent">0</h3>
+                            <p>Toplam İçerik</p>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -125,7 +125,7 @@
                             <i class="fas fa-trophy"></i>
                         </div>
                         <div class="stat-content">
-                            <h3>85%</h3>
+                            <h3 id="successRate">0%</h3>
                             <p>Başarı Oranı</p>
                         </div>
                     </div>
@@ -134,7 +134,7 @@
                             <i class="fas fa-fire"></i>
                         </div>
                         <div class="stat-content">
-                            <h3>7</h3>
+                            <h3 id="activeStreak">0</h3>
                             <p>Günlük Seri</p>
                         </div>
                     </div>
@@ -144,69 +144,22 @@
                 <div class="dashboard-grid">
                     <div class="dashboard-card">
                         <h3>Son Aktiviteler</h3>
-                        <div class="activity-list">
-                            <div class="activity-item">
-                                <div class="activity-icon">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <h4>Kesirler Konusu</h4>
-                                    <p>2 saat önce tamamlandı</p>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-icon">
-                                    <i class="fas fa-check"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <h4>Ödev Teslimi</h4>
-                                    <p>Yüzde problemleri ödevi</p>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-icon">
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <h4>Quiz Tamamlandı</h4>
-                                    <p>Geometri quizi - %90 başarı</p>
-                                </div>
+                        <div class="activity-list" id="activityList">
+                            <div class="empty-state">
+                                <i class="fas fa-clock"></i>
+                                <h3>Henüz aktivite yok</h3>
+                                <p>Öğretmeninizden içerik geldiğinde burada görünecek</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="dashboard-card">
-                        <h3>Bugünkü Hedefler</h3>
-                        <div class="goals-list">
-                            <div class="goal-item">
-                                <div class="goal-checkbox">
-                                    <input type="checkbox" id="goal1">
-                                    <label for="goal1"></label>
-                                </div>
-                                <div class="goal-content">
-                                    <h4>Yüzde konusu videosu izle</h4>
-                                    <p>45 dakika</p>
-                                </div>
-                            </div>
-                            <div class="goal-item">
-                                <div class="goal-checkbox">
-                                    <input type="checkbox" id="goal2">
-                                    <label for="goal2"></label>
-                                </div>
-                                <div class="goal-content">
-                                    <h4>5 soru çöz</h4>
-                                    <p>30 dakika</p>
-                                </div>
-                            </div>
-                            <div class="goal-item">
-                                <div class="goal-checkbox">
-                                    <input type="checkbox" id="goal3">
-                                    <label for="goal3"></label>
-                                </div>
-                                <div class="goal-content">
-                                    <h4>Notları gözden geçir</h4>
-                                    <p>20 dakika</p>
-                                </div>
+                        <h3>Bekleyen İçerikler</h3>
+                        <div class="pending-content-list" id="pendingContentList">
+                            <div class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <h3>Bekleyen içerik yok</h3>
+                                <p>Öğretmeninizden yeni içerik geldiğinde burada görünecek</p>
                             </div>
                         </div>
                     </div>
@@ -220,89 +173,11 @@
                     <p>Kayıtlı olduğunuz dersler ve ilerleme durumunuz</p>
                 </div>
 
-                <div class="courses-grid">
-                    <div class="course-card">
-                        <div class="course-header">
-                            <h3>Sayılar ve İşlemler</h3>
-                            <span class="course-status completed">Tamamlandı</span>
-                        </div>
-                        <div class="course-progress">
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 100%"></div>
-                            </div>
-                            <span>100% tamamlandı</span>
-                        </div>
-                        <div class="course-stats">
-                            <div class="stat">
-                                <i class="fas fa-video"></i>
-                                <span>8 video</span>
-                            </div>
-                            <div class="stat">
-                                <i class="fas fa-clock"></i>
-                                <span>6 saat</span>
-                            </div>
-                            <div class="stat">
-                                <i class="fas fa-star"></i>
-                                <span>95%</span>
-                            </div>
-                        </div>
-                        <button class="btn btn-secondary">Tekrar İzle</button>
-                    </div>
-
-                    <div class="course-card">
-                        <div class="course-header">
-                            <h3>Kesirler</h3>
-                            <span class="course-status in-progress">Devam Ediyor</span>
-                        </div>
-                        <div class="course-progress">
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 75%"></div>
-                            </div>
-                            <span>75% tamamlandı</span>
-                        </div>
-                        <div class="course-stats">
-                            <div class="stat">
-                                <i class="fas fa-video"></i>
-                                <span>6/8 video</span>
-                            </div>
-                            <div class="stat">
-                                <i class="fas fa-clock"></i>
-                                <span>4.5 saat</span>
-                            </div>
-                            <div class="stat">
-                                <i class="fas fa-star"></i>
-                                <span>88%</span>
-                            </div>
-                        </div>
-                        <button class="btn btn-primary">Devam Et</button>
-                    </div>
-
-                    <div class="course-card">
-                        <div class="course-header">
-                            <h3>Yüzde Problemleri</h3>
-                            <span class="course-status not-started">Başlanmadı</span>
-                        </div>
-                        <div class="course-progress">
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 0%"></div>
-                            </div>
-                            <span>0% tamamlandı</span>
-                        </div>
-                        <div class="course-stats">
-                            <div class="stat">
-                                <i class="fas fa-video"></i>
-                                <span>10 video</span>
-                            </div>
-                            <div class="stat">
-                                <i class="fas fa-clock"></i>
-                                <span>8 saat</span>
-                            </div>
-                            <div class="stat">
-                                <i class="fas fa-star"></i>
-                                <span>-</span>
-                            </div>
-                        </div>
-                        <button class="btn btn-primary">Başla</button>
+                <div class="courses-grid" id="coursesGrid">
+                    <div class="empty-state">
+                        <i class="fas fa-play-circle"></i>
+                        <h3>Henüz video gönderilmemiş</h3>
+                        <p>Öğretmeniniz size video gönderdiğinde burada görünecek</p>
                     </div>
                 </div>
             </section>
