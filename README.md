@@ -222,3 +222,4 @@ Bu proje MIT lisansı altında lisanslanmıştır.
 ---
 
 **Nora Akademi** - Matematik eğitiminde kalite ve başarı odaklı yaklaşım 
+Getform !!!
