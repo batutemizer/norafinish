@@ -190,22 +190,9 @@ async function loadStudents() {
             students.push(student);
         });
         
-        // If no students found, add demo student
+        // If no students found, show empty state
         if (students.length === 0) {
-            console.log('No students found, adding demo student');
-            const demoStudent = {
-                id: 'demo_student_uid',
-                name: 'Demo Öğrenci',
-                email: 'demo@student.com',
-                phone: '555-1234',
-                registerDate: new Date().toISOString(),
-                lastActivity: new Date().toISOString(),
-                completedLessons: 5,
-                successRate: 85,
-                status: 'active',
-                courses: ['course-1']
-            };
-            students.push(demoStudent);
+            console.log('No students found in database');
         }
         
         renderStudents(students);
@@ -273,33 +260,7 @@ async function saveContent(content) {
     try {
         // Check if currentTeacher exists
         if (!currentTeacher || !currentTeacher.email) {
-            console.log('Demo mode: Saving to localStorage only');
-            // Save to localStorage only for demo
-            const contentWithDemo = {
-                ...content,
-                id: generateId(),
-                teacherId: 'aysebuz@gmail.com',
-                teacherUID: 'demo_teacher_uid',
-                createdAt: new Date().toISOString(),
-                status: 'active'
-            };
-            
-            // Handle file for demo mode
-            if (content.file) {
-                contentWithDemo.fileName = content.file.name;
-                contentWithDemo.fileSize = content.file.size;
-                contentWithDemo.fileType = content.file.type;
-                // Store file as base64 for demo
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    contentWithDemo.fileData = e.target.result;
-                    saveContentToLocalStorage(contentWithDemo);
-                };
-                reader.readAsDataURL(content.file);
-                return;
-            } else {
-                saveContentToLocalStorage(contentWithDemo);
-            }
+            showNotification('Öğretmen bilgileri bulunamadı!', 'error');
             return;
         }
         
@@ -348,22 +309,15 @@ async function saveContentWithFileData(content, fileData, fileUrl) {
         // Remove file object before saving
         delete contentWithTeacher.file;
         
-        if (currentTeacher && currentTeacher.email !== 'aysebuz@gmail.com') {
-            // Save to Firebase Firestore
-            const docRef = await firebaseDB.collection('content').add(contentWithTeacher);
-            contentWithTeacher.id = docRef.id;
-        } else {
-            // Demo mode - generate local ID
-            contentWithTeacher.id = generateId();
-        }
+        // Save to Firebase Firestore
+        const docRef = await firebaseDB.collection('content').add(contentWithTeacher);
+        contentWithTeacher.id = docRef.id;
         
         // Update local array
         const contentKey = `${content.type}s`;
-        console.log('Saving content to:', contentKey, contentWithTeacher);
         
         if (teacherContent[contentKey]) {
             teacherContent[contentKey].unshift(contentWithTeacher);
-            console.log('Updated teacherContent:', teacherContent[contentKey]);
         } else {
             console.error('Content key not found:', contentKey, teacherContent);
         }
@@ -382,20 +336,7 @@ async function saveContentWithFileData(content, fileData, fileUrl) {
     }
 }
 
-// Helper function to save content to localStorage
-function saveContentToLocalStorage(contentWithDemo) {
-    const contentKey = `${contentWithDemo.type}s`;
-    if (teacherContent[contentKey]) {
-        teacherContent[contentKey].unshift(contentWithDemo);
-    }
-    
-    localStorage.setItem('teacherContent', JSON.stringify(teacherContent));
-    
-    // Update UI
-    renderContent(contentWithDemo.type, teacherContent[contentKey]);
-    
-    showNotification(`${getTypeName(contentWithDemo.type)} başarıyla kaydedildi! (Demo mod)`, 'success');
-}
+
 
 // Firebase: Send content to specific student
 async function sendContentToStudent(contentId, studentId, contentType) {
@@ -410,13 +351,12 @@ async function sendContentToStudent(contentId, studentId, contentType) {
         
         // Check if currentTeacher exists
         if (!currentTeacher || !currentTeacher.email) {
-            console.log('Demo mode: Content sent to student (localStorage only)');
-            showNotification(`${student.name} adlı öğrenciye ${getTypeName(contentType)} gönderildi! (Demo mod)`, 'success');
+            showNotification('Öğretmen bilgileri bulunamadı!', 'error');
             return;
         }
         
         // Save to student content collection
-        await firebaseDB.collection('studentContent').add({
+        const studentContentData = {
             contentId: contentId,
             studentId: studentId,
             contentType: contentType,
@@ -424,11 +364,15 @@ async function sendContentToStudent(contentId, studentId, contentType) {
             contentTitle: content.title,
             contentDescription: content.description,
             fileUrl: content.fileUrl || '',
+            fileData: content.fileData || '',
+            fileName: content.fileName || '',
             sentAt: firebase.firestore.FieldValue.serverTimestamp(),
             status: 'sent',
             completed: false,
             completedAt: null
-        });
+        };
+        
+        await firebaseDB.collection('studentContent').add(studentContentData);
         
         showNotification(`${student.name} adlı öğrenciye ${getTypeName(contentType)} gönderildi!`, 'success');
         
@@ -759,8 +703,6 @@ function loadDemoContent() {
 
 // Render content
 function renderContent(type, contentArray) {
-    console.log('Rendering content for type:', type, 'with array:', contentArray);
-    
     const grid = document.getElementById(`${type}Grid`);
     if (!grid) {
         console.error('Grid not found for type:', type);
@@ -770,7 +712,6 @@ function renderContent(type, contentArray) {
     grid.innerHTML = '';
     
     if (contentArray.length === 0) {
-        console.log('No content found for type:', type);
         grid.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-${getTypeIcon(type)}"></i>

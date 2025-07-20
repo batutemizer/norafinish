@@ -1,4 +1,12 @@
-// Dashboard JavaScript
+// Dashboard JavaScript with Firebase Integration
+
+let currentStudent = null;
+let studentContent = {
+    videos: [],
+    quizzes: [],
+    assignments: [],
+    materials: []
+};
 
 // Check authentication
 function checkAuth() {
@@ -14,11 +22,16 @@ function checkAuth() {
         return;
     }
     
+    currentStudent = user;
+    
     // Update user name
     const userNameElement = document.querySelector('.user-name');
     if (userNameElement && user.name) {
         userNameElement.textContent = user.name;
     }
+    
+    // Load student content from Firebase
+    loadStudentContent();
 }
 
 // Initialize dashboard
@@ -29,7 +42,244 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeNotes();
     initializeGoals();
     initializeModal();
+    initializeContentSections();
 });
+
+// Load student content from Firebase
+async function loadStudentContent() {
+    try {
+        if (!currentStudent || !currentStudent.uid) {
+            console.log('Demo mode: Loading demo content');
+            loadDemoContent();
+            return;
+        }
+        
+        // Load content sent to this student from Firestore
+        const contentSnapshot = await firebase.firestore().collection('studentContent')
+            .where('studentId', '==', currentStudent.uid)
+            .get();
+        
+        // Reset content arrays
+        studentContent = {
+            videos: [],
+            quizzes: [],
+            assignments: [],
+            materials: []
+        };
+        
+        // Process Firebase documents
+        contentSnapshot.forEach(doc => {
+            const content = {
+                id: doc.id,
+                ...doc.data()
+            };
+            
+            // Convert timestamp to string
+            if (content.sentAt) {
+                content.sentAt = content.sentAt.toDate().toISOString();
+            }
+            
+            const contentKey = `${content.contentType}s`;
+            if (studentContent[contentKey]) {
+                studentContent[contentKey].push(content);
+            }
+        });
+        
+        // If no content found, show empty state
+        if (studentContent.videos.length === 0 && 
+            studentContent.quizzes.length === 0 && 
+            studentContent.assignments.length === 0 && 
+            studentContent.materials.length === 0) {
+            console.log('No content sent to this student');
+        }
+        
+        // Render content in appropriate sections
+        renderStudentContent();
+        
+    } catch (error) {
+        console.error('Error loading student content:', error);
+        showNotification('İçerik yüklenirken hata oluştu!', 'error');
+    }
+}
+
+
+
+// Render student content in dashboard sections
+function renderStudentContent() {
+    // Render videos in courses section
+    renderContentSection('videos', 'coursesGrid', 'video');
+    
+    // Render assignments in assignments section
+    renderContentSection('assignments', 'assignmentsGrid', 'assignment');
+    
+    // Render materials in notes section
+    renderContentSection('materials', 'notesGrid', 'material');
+    
+    // Update recent activities
+    updateRecentActivities();
+}
+
+// Render content in specific section
+function renderContentSection(contentType, gridId, iconType) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+    
+    const contentArray = studentContent[contentType] || [];
+    
+    if (contentArray.length === 0) {
+        grid.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-${getContentIcon(iconType)}"></i>
+                <h3>Henüz ${getContentTypeName(iconType)} gönderilmemiş</h3>
+                <p>Öğretmeniniz size ${getContentTypeName(iconType).toLowerCase()} gönderdiğinde burada görünecek</p>
+            </div>
+        `;
+        return;
+    }
+    
+    grid.innerHTML = '';
+    contentArray.forEach(content => {
+        const card = createContentCard(content);
+        grid.appendChild(card);
+    });
+}
+
+// Create content card
+function createContentCard(content) {
+    const card = document.createElement('div');
+    card.className = 'content-card';
+    
+    const statusClass = content.completed ? 'completed' : 'pending';
+    const statusText = content.completed ? 'Tamamlandı' : 'Bekliyor';
+    
+    card.innerHTML = `
+        <div class="content-header">
+            <h4 class="content-title">${content.contentTitle}</h4>
+            <span class="content-status ${statusClass}">${statusText}</span>
+        </div>
+        <div class="content-description">${content.contentDescription}</div>
+        <div class="content-meta">
+            <span>${formatDate(content.sentAt)}</span>
+        </div>
+        <div class="content-actions">
+            <button class="view-btn" onclick="viewContent('${content.id}', '${content.contentType}')">
+                <i class="fas fa-eye"></i> Görüntüle
+            </button>
+            ${!content.completed ? `
+                <button class="complete-btn" onclick="markAsCompleted('${content.id}', '${content.contentType}')">
+                    <i class="fas fa-check"></i> Tamamla
+                </button>
+            ` : ''}
+        </div>
+    `;
+    
+    return card;
+}
+
+// Helper functions
+function getContentIcon(type) {
+    const icons = {
+        video: 'play-circle',
+        quiz: 'question-circle',
+        assignment: 'file-alt',
+        material: 'file-pdf'
+    };
+    return icons[type] || 'file';
+}
+
+function getContentTypeName(type) {
+    const names = {
+        video: 'Video',
+        quiz: 'Quiz',
+        assignment: 'Ödev',
+        material: 'Materyal'
+    };
+    return names[type] || 'İçerik';
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('tr-TR');
+}
+
+// View content
+function viewContent(contentId, contentType) {
+    const content = studentContent[`${contentType}s`].find(c => c.id === contentId);
+    if (!content) return;
+    
+    // For demo, just show a notification
+    showNotification(`${content.contentTitle} görüntüleniyor...`, 'info');
+}
+
+// Mark content as completed
+async function markAsCompleted(contentId, contentType) {
+    try {
+        const content = studentContent[`${contentType}s`].find(c => c.id === contentId);
+        if (!content) return;
+        
+        content.completed = true;
+        content.completedAt = new Date().toISOString();
+        
+        // Update in Firebase if real student
+        if (currentStudent && currentStudent.uid !== 'demo_student_uid') {
+            await firebase.firestore().collection('studentContent').doc(contentId).update({
+                completed: true,
+                completedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+        
+        // Re-render content
+        renderStudentContent();
+        
+        showNotification(`${content.contentTitle} tamamlandı!`, 'success');
+        
+    } catch (error) {
+        console.error('Error marking content as completed:', error);
+        showNotification('İçerik tamamlanırken hata oluştu!', 'error');
+    }
+}
+
+// Update recent activities
+function updateRecentActivities() {
+    const activityList = document.querySelector('.activity-list');
+    if (!activityList) return;
+    
+    // Get recent activities from content
+    const allContent = [
+        ...studentContent.videos,
+        ...studentContent.quizzes,
+        ...studentContent.assignments,
+        ...studentContent.materials
+    ].sort((a, b) => new Date(b.sentAt) - new Date(a.sentAt)).slice(0, 3);
+    
+    if (allContent.length === 0) return;
+    
+    const recentActivities = allContent.map(content => {
+        const icon = content.completed ? 'fa-check' : 'fa-clock';
+        const text = content.completed ? 'tamamlandı' : 'gönderildi';
+        
+        return `
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class="fas ${icon}"></i>
+                </div>
+                <div class="activity-content">
+                    <h4>${content.contentTitle}</h4>
+                    <p>${text}</p>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    // Add to existing activities or replace
+    const existingActivities = activityList.innerHTML;
+    activityList.innerHTML = recentActivities + existingActivities;
+}
+
+// Initialize content sections
+function initializeContentSections() {
+    // This will be called after content is loaded
+}
 
 // Navigation functionality
 function initializeNavigation() {
