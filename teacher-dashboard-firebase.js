@@ -293,24 +293,17 @@ async function saveContent(content) {
         let fileUrl = '';
         let fileData = '';
         
-        // Handle file upload (with CORS fallback)
+        // Handle file upload (localStorage only due to CORS issues)
         if (content.file) {
-            try {
-                // Try Firebase Storage first
-                const fileRef = firebaseStorage.ref(`content/${currentTeacher.uid}/${Date.now()}_${content.file.name}`);
-                const snapshot = await fileRef.put(content.file);
-                fileUrl = await snapshot.ref.getDownloadURL();
-            } catch (storageError) {
-                console.warn('Firebase Storage failed, using base64 fallback:', storageError);
-                // Fallback to base64 storage
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    fileData = e.target.result;
-                    saveContentWithFileData(content, fileData, '');
-                };
-                reader.readAsDataURL(content.file);
-                return; // Exit early, will continue in reader.onload
-            }
+            console.log('Using localStorage for file storage (CORS bypass)');
+            // Convert file to base64 for localStorage storage
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                fileData = e.target.result;
+                saveContentWithFileData(content, fileData, '');
+            };
+            reader.readAsDataURL(content.file);
+            return; // Exit early, will continue in reader.onload
         }
         
         // Save content with file URL
@@ -353,8 +346,13 @@ async function saveContentWithFileData(content, fileData, fileUrl) {
         
         // Update local array
         const contentKey = `${content.type}s`;
+        console.log('Saving content to:', contentKey, contentWithTeacher);
+        
         if (teacherContent[contentKey]) {
             teacherContent[contentKey].unshift(contentWithTeacher);
+            console.log('Updated teacherContent:', teacherContent[contentKey]);
+        } else {
+            console.error('Content key not found:', contentKey, teacherContent);
         }
         
         // Save to localStorage for offline access
@@ -748,12 +746,18 @@ function loadDemoContent() {
 
 // Render content
 function renderContent(type, contentArray) {
+    console.log('Rendering content for type:', type, 'with array:', contentArray);
+    
     const grid = document.getElementById(`${type}Grid`);
-    if (!grid) return;
+    if (!grid) {
+        console.error('Grid not found for type:', type);
+        return;
+    }
     
     grid.innerHTML = '';
     
     if (contentArray.length === 0) {
+        console.log('No content found for type:', type);
         grid.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-${getTypeIcon(type)}"></i>
