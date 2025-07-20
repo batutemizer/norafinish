@@ -2,8 +2,16 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('teacherLoginForm');
+    const registerForm = document.getElementById('teacherRegisterForm');
+    const switchBtn = document.getElementById('switchBtn');
+    const switchText = document.getElementById('switchText');
     
     loginForm.addEventListener('submit', handleTeacherLogin);
+    registerForm.addEventListener('submit', handleTeacherRegister);
+    switchBtn.addEventListener('click', toggleForms);
+    
+    // Initialize password toggles
+    initializePasswordToggles();
     
     // Check if user is already logged in
     checkAuthState();
@@ -19,6 +27,48 @@ function checkAuthState() {
     });
 }
 
+// Toggle between login and register forms
+function toggleForms(e) {
+    e.preventDefault();
+    
+    const loginForm = document.getElementById('teacherLoginForm');
+    const registerForm = document.getElementById('teacherRegisterForm');
+    const switchText = document.getElementById('switchText');
+    const switchBtn = document.getElementById('switchBtn');
+    
+    if (loginForm.style.display === 'none') {
+        // Show login form
+        loginForm.style.display = 'block';
+        registerForm.style.display = 'none';
+        switchText.innerHTML = 'Hesabınız yok mu? <a href="#" id="switchBtn">Kayıt olun</a>';
+        document.getElementById('switchBtn').addEventListener('click', toggleForms);
+    } else {
+        // Show register form
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'block';
+        switchText.innerHTML = 'Zaten hesabınız var mı? <a href="#" id="switchBtn">Giriş yapın</a>';
+        document.getElementById('switchBtn').addEventListener('click', toggleForms);
+    }
+}
+
+// Initialize password toggle functionality
+function initializePasswordToggles() {
+    const toggleBtns = document.querySelectorAll('.toggle-password');
+    
+    toggleBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const input = this.previousElementSibling;
+            if (input.type === 'password') {
+                input.type = 'text';
+                this.className = 'fas fa-eye-slash toggle-password';
+            } else {
+                input.type = 'password';
+                this.className = 'fas fa-eye toggle-password';
+            }
+        });
+    });
+}
+
 // Handle teacher login with Firebase
 async function handleTeacherLogin(e) {
     e.preventDefault();
@@ -27,12 +77,14 @@ async function handleTeacherLogin(e) {
     const password = document.getElementById('teacherPassword').value;
     
     // Show loading state
-    const submitBtn = loginForm.querySelector('button[type="submit"]');
+    const submitBtn = e.target.querySelector('button[type="submit"]');
     const btnText = submitBtn.querySelector('.btn-text');
     const btnLoading = submitBtn.querySelector('.btn-loading');
+    const btnIcon = submitBtn.querySelector('.fas');
     
     btnText.style.display = 'none';
     btnLoading.style.display = 'inline-flex';
+    btnIcon.style.display = 'none';
     submitBtn.disabled = true;
     
     try {
@@ -77,21 +129,86 @@ async function handleTeacherLogin(e) {
         // Reset button state
         btnText.style.display = 'inline';
         btnLoading.style.display = 'none';
+        btnIcon.style.display = 'inline';
         submitBtn.disabled = false;
     }
 }
 
-// Toggle password visibility
-function togglePassword(inputId) {
-    const input = document.getElementById(inputId);
-    const toggleBtn = input.parentNode.querySelector('.password-toggle i');
+// Handle teacher registration with Firebase
+async function handleTeacherRegister(e) {
+    e.preventDefault();
     
-    if (input.type === 'password') {
-        input.type = 'text';
-        toggleBtn.className = 'fas fa-eye-slash';
-    } else {
-        input.type = 'password';
-        toggleBtn.className = 'fas fa-eye';
+    const name = document.getElementById('teacherRegisterName').value;
+    const email = document.getElementById('teacherRegisterEmail').value;
+    const phone = document.getElementById('teacherRegisterPhone').value;
+    const subject = document.getElementById('teacherRegisterSubject').value;
+    const password = document.getElementById('teacherRegisterPassword').value;
+    const passwordConfirm = document.getElementById('teacherRegisterPasswordConfirm').value;
+    
+    // Validate passwords match
+    if (password !== passwordConfirm) {
+        showNotification('Şifreler eşleşmiyor!', 'error');
+        return;
+    }
+    
+    // Validate password length
+    if (password.length < 6) {
+        showNotification('Şifre en az 6 karakter olmalıdır!', 'error');
+        return;
+    }
+    
+    // Show loading state
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const btnText = submitBtn.querySelector('span');
+    const btnIcon = submitBtn.querySelector('.fas');
+    
+    btnText.textContent = 'Kayıt yapılıyor...';
+    btnIcon.className = 'fas fa-spinner fa-spin';
+    submitBtn.disabled = true;
+    
+    try {
+        // Firebase registration
+        const userCredential = await firebaseAuth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        // Save additional teacher data to Firestore
+        await firebaseDB.collection('teachers').doc(user.uid).set({
+            name: name,
+            email: email,
+            phone: phone,
+            subject: subject,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            status: 'active'
+        });
+        
+        showNotification('Kayıt başarılı! Giriş yapabilirsiniz.', 'success');
+        
+        // Switch back to login form
+        setTimeout(() => {
+            toggleForms({ preventDefault: () => {} });
+        }, 2000);
+        
+    } catch (error) {
+        console.error('Registration error:', error);
+        
+        let errorMessage = 'Kayıt yapılırken hata oluştu!';
+        
+        if (error.code === 'auth/email-already-in-use') {
+            errorMessage = 'Bu email adresi zaten kullanılıyor!';
+        } else if (error.code === 'auth/weak-password') {
+            errorMessage = 'Şifre çok zayıf!';
+        } else if (error.code === 'auth/invalid-email') {
+            errorMessage = 'Geçersiz email adresi!';
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+        
+        showNotification(errorMessage, 'error');
+        
+        // Reset button state
+        btnText.textContent = 'Kayıt Ol';
+        btnIcon.className = 'fas fa-user-plus';
+        submitBtn.disabled = false;
     }
 }
 
