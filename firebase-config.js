@@ -15,11 +15,9 @@ firebase.initializeApp(firebaseConfig);
 // Initialize Firebase services
 const auth = firebase.auth();
 const db = firebase.firestore();
-const storage = firebase.storage();
 const analytics = firebase.analytics();
 
 // Export for use in other files
 window.firebaseAuth = auth;
 window.firebaseDB = db;
-window.firebaseStorage = storage;
 window.firebaseAnalytics = analytics; 
