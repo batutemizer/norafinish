@@ -130,6 +130,30 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC9S4swtLTwQPPOnGBDp0DtBuWWVyNu_Sw",
+            authDomain: "orason-74e2f.firebaseapp.com",
+            projectId: "orason-74e2f",
+            storageBucket: "orason-74e2f.firebasestorage.app",
+            messagingSenderId: "668082331524",
+            appId: "1:668082331524:web:7147dc353f28d464c187d1",
+            measurementId: "G-KMK22WJ1X1"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Initialize Firebase services
+        const firebaseAuth = firebase.auth();
+        const firebaseDB = firebase.firestore();
+    </script>
     <script src="teacher-login.js"></script>
 </body>
 </html> 
