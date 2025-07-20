@@ -190,9 +190,9 @@ async function loadStudents() {
             students.push(student);
         });
         
-        // If no students found, load demo students
+        // If no students found, show empty state
         if (students.length === 0) {
-            loadDemoStudents();
+            console.log('No students found in database');
         }
         
         renderStudents(students);
@@ -819,6 +819,21 @@ function renderStudents(students) {
     
     tbody.innerHTML = '';
     
+    if (students.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="empty-state">
+                    <div class="empty-state-content">
+                        <i class="fas fa-users"></i>
+                        <h3>Henüz kayıtlı öğrenci yok</h3>
+                        <p>Öğrenciler kayıt olduktan sonra burada görünecek</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
     students.forEach(student => {
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -833,8 +848,8 @@ function renderStudents(students) {
             </td>
             <td>${student.email}</td>
             <td>${formatDate(student.registerDate)}</td>
-            <td>${student.completedLessons}</td>
-            <td>${student.successRate}%</td>
+            <td>${student.completedLessons || 0}</td>
+            <td>${student.successRate || 0}%</td>
             <td><span class="student-status ${student.status}">${student.status === 'active' ? 'Aktif' : 'Pasif'}</span></td>
             <td>
                 <div class="student-actions">

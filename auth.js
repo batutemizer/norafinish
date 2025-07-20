@@ -68,26 +68,53 @@ loginForm.addEventListener('submit', async (e) => {
     submitBtn.classList.add('loading');
     
     try {
-        // Simulate API call
-        await simulateLogin(email, password, rememberMe);
+        // Firebase Authentication - Sign in
+        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
         
-        // Store user data in localStorage
-        const userData = {
-            email: email,
-            name: email.split('@')[0], // Simple name extraction
-            isLoggedIn: true,
-            loginTime: new Date().toISOString()
-        };
+        // Get student data from Firestore
+        const studentDoc = await firebase.firestore().collection('students').doc(user.uid).get();
         
-        localStorage.setItem('noraUser', JSON.stringify(userData));
-        
-        // Redirect to dashboard
-        setTimeout(() => {
-            window.location.href = 'dashboard.html';
-        }, 1000);
+        if (studentDoc.exists) {
+            const studentData = studentDoc.data();
+            
+            // Update last activity
+            await firebase.firestore().collection('students').doc(user.uid).update({
+                lastActivity: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            // Store user data in localStorage
+            const userData = {
+                uid: user.uid,
+                email: email,
+                name: studentData.name,
+                phone: studentData.phone,
+                isLoggedIn: true,
+                loginTime: new Date().toISOString()
+            };
+            
+            localStorage.setItem('noraUser', JSON.stringify(userData));
+            
+            showNotification('Giriş başarılı!', 'success');
+            
+            // Redirect to dashboard
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1000);
+        } else {
+            throw new Error('Öğrenci bilgileri bulunamadı!');
+        }
         
     } catch (error) {
-        showNotification(error.message, 'error');
+        console.error('Login error:', error);
+        
+        if (error.code === 'auth/user-not-found') {
+            showNotification('Bu email adresi ile kayıtlı kullanıcı bulunamadı!', 'error');
+        } else if (error.code === 'auth/wrong-password') {
+            showNotification('Hatalı şifre!', 'error');
+        } else {
+            showNotification('Giriş sırasında hata oluştu: ' + error.message, 'error');
+        }
     } finally {
         submitBtn.classList.remove('loading');
     }
@@ -120,11 +147,27 @@ registerForm.addEventListener('submit', async (e) => {
     submitBtn.classList.add('loading');
     
     try {
-        // Simulate API call
-        await simulateRegister(name, email, phone, password);
+        // Firebase Authentication - Create user
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
         
-        // Store user data
+        // Save student data to Firestore
+        await firebase.firestore().collection('students').doc(user.uid).set({
+            name: name,
+            email: email,
+            phone: phone,
+            registerDate: firebase.firestore.FieldValue.serverTimestamp(),
+            lastActivity: firebase.firestore.FieldValue.serverTimestamp(),
+            completedLessons: 0,
+            successRate: 0,
+            status: 'active',
+            courses: [],
+            isNewUser: true
+        });
+        
+        // Store user data locally
         const userData = {
+            uid: user.uid,
             name: name,
             email: email,
             phone: phone,
@@ -143,7 +186,15 @@ registerForm.addEventListener('submit', async (e) => {
         }, 2000);
         
     } catch (error) {
-        showNotification(error.message, 'error');
+        console.error('Registration error:', error);
+        
+        if (error.code === 'auth/email-already-in-use') {
+            showNotification('Bu email adresi zaten kullanımda!', 'error');
+        } else if (error.code === 'auth/weak-password') {
+            showNotification('Şifre en az 6 karakter olmalıdır!', 'error');
+        } else {
+            showNotification('Kayıt sırasında hata oluştu: ' + error.message, 'error');
+        }
     } finally {
         submitBtn.classList.remove('loading');
     }
