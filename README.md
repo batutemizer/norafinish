@@ -71,15 +71,34 @@ Modern, animasyonlu ve profesyonel bir matematik eğitim web sitesi. Nora Akadem
 - **Font Awesome**: İkonlar
 - **Google Fonts**: Poppins font
 
-## 📁 Dosya Yapısı
+## 📁 Dosya Yapısı (Vercel için Önerilen)
 
 ```
 noraonline/
-├── index.html          # Ana HTML dosyası
-├── styles.css          # CSS stilleri
-├── script.js           # JavaScript fonksiyonları
-└── README.md           # Proje dokümantasyonu
+├── index.html
+├── styles.css
+├── script.js
+├── images/
+│   ├── ayse.jpeg
+│   ├── ecem.jpeg
+│   └── logonet.png
+└── README.md
 ```
+
+- Tüm dosyalar kök dizinde olmalı.
+- Görseller `images/` klasöründe olmalı.
+- Ekstra bir yapılandırma gerekmez.
+
+## 🚀 Vercel ile Yayınlama Adımları
+
+1. [Vercel](https://vercel.com/) hesabı açın.
+2. Proje klasörünüzü bir GitHub reposuna yükleyin (veya Vercel'e doğrudan yükleyin).
+3. Vercel panelinde “New Project” → GitHub reposunu seçin veya dosyaları yükleyin.
+4. Proje ayarlarında **Framework Preset** olarak `Other` veya `Static` seçin.
+5. Deploy edin, otomatik olarak bir canlı link oluşur.
+6. Alan adı bağlamak için Vercel panelinden domain ekleyebilirsiniz.
+
+> **Not:** `index.html` dosyanız kök dizinde olmalı, aksi halde Vercel ana sayfanızı bulamaz.
 
 ## 🎨 Tasarım Özellikleri
 

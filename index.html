@@ -28,12 +28,6 @@
                 <li class="nav-item">
                     <a href="#contact" class="nav-link">İletişim</a>
                 </li>
-                <li class="nav-item">
-                    <a href="login.html" class="nav-link">Öğrenci Girişi</a>
-                </li>
-                <li class="nav-item">
-                    <a href="teacher-login.html" class="nav-link">Öğretmen Paneli</a>
-                </li>
             </ul>
             <div class="hamburger">
                 <span class="bar"></span>
@@ -171,6 +165,43 @@
         </div>
     </section>
 
+    <!-- Ders Anlatım Teknikleri Bölümü -->
+    <section id="teaching-methods" class="teaching-methods">
+      <div class="container">
+        <div class="section-header" data-aos="fade-up">
+          <h2>Kullandığımız Ders Anlatım Teknikleri</h2>
+          <p>Her öğrencinin öğrenme stiline uygun, modern ve etkili yöntemler</p>
+        </div>
+        <div class="methods-grid">
+          <div class="method-card" data-aos="fade-up" data-aos-delay="100">
+            <i class="fas fa-lightbulb"></i>
+            <h4>Aktif Katılım</h4>
+            <p>Öğrencilerimizi derse aktif olarak dahil ediyor, soru-cevap ve uygulamalı etkinliklerle öğrenmeyi kalıcı hale getiriyoruz.</p>
+          </div>
+          <div class="method-card" data-aos="fade-up" data-aos-delay="200">
+            <i class="fas fa-chalkboard-teacher"></i>
+            <h4>Görsel ve İşitsel Materyaller</h4>
+            <p>Video, animasyon ve interaktif sunumlarla konuları daha anlaşılır ve eğlenceli hale getiriyoruz.</p>
+          </div>
+          <div class="method-card" data-aos="fade-up" data-aos-delay="300">
+            <i class="fas fa-users"></i>
+            <h4>Küçük Grup Çalışmaları</h4>
+            <p>Öğrencilerimizin işbirliği yaparak öğrenmesini sağlıyor, sosyal ve iletişim becerilerini geliştiriyoruz.</p>
+          </div>
+          <div class="method-card" data-aos="fade-up" data-aos-delay="400">
+            <i class="fas fa-brain"></i>
+            <h4>Bireyselleştirilmiş Eğitim</h4>
+            <p>Her öğrencinin seviyesine ve ihtiyacına göre özel çalışma planları ve ek materyaller sunuyoruz.</p>
+          </div>
+          <div class="method-card" data-aos="fade-up" data-aos-delay="500">
+            <i class="fas fa-tasks"></i>
+            <h4>Uygulamalı Alıştırmalar</h4>
+            <p>Her konu sonunda bolca pratik soru ve gerçek hayat problemleriyle bilgiyi pekiştiriyoruz.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Courses Section -->
     <section id="courses" class="courses">
         <div class="container">
@@ -271,7 +302,19 @@
                     </div>
                 </div>
                 <div class="contact-form" data-aos="fade-left">
-                    <form action="https://formspree.io/f/manbqjdo" method="POST">
+                    <form id="contactFormLocal" autocomplete="off">
+                        <div class="form-group select-modern">
+                            <label for="subject">Konu Seçiniz</label>
+                            <span class="select-icon"><i class="fas fa-tag"></i></span>
+                            <select name="subject" id="subject" required>
+                                <option value="" disabled selected>Konu seçiniz</option>
+                                <option value="Genel Bilgi">Genel Bilgi</option>
+                                <option value="Kayıt">Kayıt</option>
+                                <option value="Ders İçeriği">Ders İçeriği</option>
+                                <option value="Ödeme">Ödeme</option>
+                                <option value="Diğer">Diğer</option>
+                            </select>
+                        </div>
                         <div class="form-group">
                             <input type="text" name="name" placeholder="Adınız" required>
                         </div>
@@ -290,6 +333,152 @@
             </div>
         </div>
     </section>
+
+    <!-- Ajans Havasında Öğretmenlik Başvurusu Reklam Kutusu -->
+    <section class="teacher-apply-hero">
+      <div class="apply-hero-content">
+        <div class="apply-hero-icon">
+          <span>🎓</span>
+        </div>
+        <div class="apply-hero-text">
+          <h2>Ekibimize Katıl</h2>
+          <p>Dinamik ve yenilikçi öğretmen kadromuza katılmak ister misin?<br><strong>Hayalini kurduğun eğitim ortamı burada.</strong></p>
+          <button class="apply-hero-btn" onclick="document.getElementById('teacherModal').style.display='block'">Hemen Başvur</button>
+        </div>
+      </div>
+    </section>
+    <!-- Başvuru Modalı -->
+    <div id="teacherModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="document.getElementById('teacherModal').style.display='none'">&times;</span>
+        <h2>Öğretmen Başvuru Formu</h2>
+        <form id="teacherApplicationForm" class="application-form" autocomplete="off">
+          <div class="form-group">
+            <label for="teacher-name">Ad Soyad</label>
+            <input type="text" id="teacher-name" name="name" required>
+          </div>
+          <div class="form-group">
+            <label for="teacher-email">E-posta</label>
+            <input type="email" id="teacher-email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="teacher-phone">Telefon</label>
+            <input type="tel" id="teacher-phone" name="phone">
+          </div>
+          <div class="form-group">
+            <label for="teacher-branch">Branş</label>
+            <input type="text" id="teacher-branch" name="branch" required>
+          </div>
+          <div class="form-group">
+            <label for="teacher-cv">CV (isteğe bağlı)</label>
+            <input type="file" id="teacher-cv" name="cv">
+          </div>
+          <div class="form-group">
+            <label for="teacher-message">Kendinizi Tanıtın</label>
+            <textarea id="teacher-message" name="message" rows="4" required></textarea>
+          </div>
+          <button type="submit">Başvur</button>
+        </form>
+      </div>
+    </div>
+    <script>
+function showApplicationNotification() {
+  // Bildirim varsa kaldır
+  const existing = document.querySelector('.notification');
+  if (existing) existing.remove();
+  // Bildirim oluştur
+  const notification = document.createElement('div');
+  notification.className = 'notification notification-success';
+  notification.innerHTML = `
+    <div class="notification-content">
+      <span class="notification-message">Başvurunuz iletildi, kısa sürede dönüş yapılacak.</span>
+      <button class="notification-close" onclick="this.parentElement.parentElement.remove()">&times;</button>
+    </div>
+  `;
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #4CAF50;
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    max-width: 400px;
+  `;
+  document.body.appendChild(notification);
+  setTimeout(() => { notification.style.transform = 'translateX(0)'; }, 100);
+  setTimeout(() => {
+    if (notification.parentNode) {
+      notification.style.transform = 'translateX(400px)';
+      setTimeout(() => notification.remove(), 300);
+    }
+  }, 4000);
+}
+
+// İletişim formu submit işlemi
+const contactFormLocal = document.getElementById('contactFormLocal');
+if (contactFormLocal) {
+  contactFormLocal.addEventListener('submit', function(e) {
+    e.preventDefault();
+    // Alanları kontrol et
+    const name = this.querySelector('input[name="name"]').value.trim();
+    const email = this.querySelector('input[name="email"]').value.trim();
+    const subject = this.querySelector('select[name="subject"]').value;
+    const message = this.querySelector('textarea[name="message"]').value.trim();
+    if (!name || !email || !subject || !message) {
+      showNotification('Lütfen tüm gerekli alanları doldurun.', 'error');
+      return;
+    }
+    // Email kontrolü
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showNotification('Lütfen geçerli bir email adresi girin.', 'error');
+      return;
+    }
+    // Bildirim göster
+    showNotification('Mesajınız iletildi, kısa sürede dönüş yapılacak.', 'success');
+    this.reset();
+  });
+}
+// Modal kapama (arka plana tıklayınca kapansın)
+window.onclick = function(event) {
+  var modal = document.getElementById('teacherModal');
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+// Başvuru formu submit işlemi
+const teacherForm = document.getElementById('teacherApplicationForm');
+if (teacherForm) {
+  teacherForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    // Alanları kontrol et
+    const name = this.querySelector('input[name="name"]').value.trim();
+    const email = this.querySelector('input[name="email"]').value.trim();
+    const branch = this.querySelector('input[name="branch"]').value.trim();
+    const message = this.querySelector('textarea[name="message"]').value.trim();
+    if (!name || !email || !branch || !message) {
+      showNotification('Lütfen tüm gerekli alanları doldurun.', 'error');
+      return;
+    }
+    // Email kontrolü
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showNotification('Lütfen geçerli bir email adresi girin.', 'error');
+      return;
+    }
+    // Modalı kapat
+    document.getElementById('teacherModal').style.display = 'none';
+    // Bildirim göster
+    showNotification('Başvurunuz alındı, kısa sürede dönüş yapılacak.', 'success');
+    this.reset();
+  });
+}
+    </script>
 
     <!-- Footer -->
     <footer class="footer">

@@ -610,6 +610,95 @@ body {
     min-height: 120px;
 }
 
+/* İletişim formu select kutusu için şık stil */
+#contact .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #1e293b;
+}
+#contact .form-group select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #1e293b;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(30,58,138,0.04);
+    margin-bottom: 8px;
+    outline: none;
+    appearance: none;
+}
+#contact .form-group select:focus, #contact .form-group select:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px #3b82f633;
+    background: #fff;
+}
+#contact .form-group option {
+    color: #1e293b;
+}
+
+/* Modern Konu Seçiniz Barı */
+#contact .form-group.select-modern {
+    position: relative;
+    margin-bottom: 18px;
+}
+#contact .form-group.select-modern label {
+    font-size: 1.08rem;
+    font-weight: 600;
+    color: #2563eb;
+    margin-bottom: 8px;
+    display: block;
+    letter-spacing: 0.5px;
+}
+#contact .form-group.select-modern .select-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #3b82f6;
+    font-size: 1.2rem;
+    pointer-events: none;
+    z-index: 2;
+}
+#contact .form-group.select-modern select {
+    width: 100%;
+    padding: 14px 16px 14px 44px;
+    border: 2px solid #3b82f6;
+    border-radius: 12px;
+    background: #f1f5f9;
+    color: #1e293b;
+    font-size: 1.08rem;
+    font-weight: 500;
+    box-shadow: 0 4px 18px rgba(59,130,246,0.07);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+}
+#contact .form-group.select-modern select:focus, #contact .form-group.select-modern select:hover {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px #2563eb33;
+    background: #fff;
+}
+#contact .form-group.select-modern select option {
+    color: #1e293b;
+}
+#contact .form-group.select-modern select:invalid {
+    color: #94a3b8;
+}
+@media (max-width: 600px) {
+    #contact .form-group.select-modern select {
+        font-size: 1rem;
+        padding-left: 38px;
+    }
+    #contact .form-group.select-modern .select-icon {
+        left: 10px;
+        font-size: 1rem;
+    }
+}
+
 /* Footer */
 .footer {
     background: #2c3e50;
@@ -833,4 +922,362 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(135deg, #1e40af 0%, #b45309 100%);
+} 
+
+/* Yakında Bannerı */
+.coming-soon-banner {
+  background: linear-gradient(90deg, #fbbf24 0%, #3b82f6 100%);
+  color: #fff;
+  padding: 40px 0;
+  text-align: center;
+  margin: 40px 0 0 0;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(59,130,246,0.08);
+}
+.coming-soon-content h2 {
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.coming-soon-content p {
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+.soon-label {
+  display: inline-block;
+  background: #fff;
+  color: #3b82f6;
+  font-weight: 600;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+/* Yakında eklenecek öğretmen kartları */
+.teacher-card.coming-soon {
+  background: repeating-linear-gradient(135deg, #fbbf24 0 10px, #fff 10px 20px);
+  opacity: 0.7;
+  border: 2px dashed #3b82f6;
+  box-shadow: 0 2px 12px rgba(59,130,246,0.06);
+}
+.teacher-card.coming-soon .teacher-title {
+  color: #3b82f6;
+  font-weight: bold;
+} 
+
+/* Ders Anlatım Teknikleri Bölümü */
+.teaching-methods {
+  background: #f8fafc;
+  padding: 60px 0 40px 0;
+}
+.teaching-methods .section-header h2 {
+  color: #1e3a8a;
+  font-weight: 700;
+}
+.methods-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 28px;
+  margin-top: 36px;
+}
+.method-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(30,58,138,0.07);
+  padding: 32px 22px 26px 22px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.method-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 8px 32px rgba(59,130,246,0.13);
+}
+.method-card i {
+  font-size: 2.2rem;
+  color: #3b82f6;
+  margin-bottom: 14px;
+}
+.method-card h4 {
+  font-size: 1.15rem;
+  color: #1e293b;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+.method-card p {
+  color: #64748b;
+  font-size: 0.98rem;
+} 
+
+/* Modern Ekibimize Katıl Kartı */
+.teacher-apply-hero {
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 2px 10px rgba(30,58,138,0.05);
+  margin: 32px auto 28px auto;
+  max-width: 350px;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.apply-hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  min-height: unset;
+  padding: 22px 16px 18px 16px;
+}
+.apply-hero-icon {
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  font-size: 1.5rem;
+  color: #3b82f6;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  box-shadow: none;
+}
+.apply-hero-text {
+  flex: 1;
+  padding: 0;
+  color: #334155;
+  text-align: center;
+}
+.apply-hero-text h2 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 7px;
+  letter-spacing: 0.1px;
+  color: #1e3a8a;
+}
+.apply-hero-text p {
+  font-size: 0.93rem;
+  font-weight: 400;
+  margin-bottom: 13px;
+  line-height: 1.5;
+  color: #64748b;
+}
+.apply-hero-text strong {
+  color: #3b82f6;
+  font-weight: 500;
+}
+.apply-hero-btn {
+  background: #f8fafc;
+  color: #1e3a8a;
+  font-weight: 500;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  padding: 9px 22px;
+  font-size: 0.98rem;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background 0.15s, color 0.15s, border 0.15s, transform 0.12s;
+}
+.apply-hero-btn:hover {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #1e3a8a;
+  transform: scale(1.03);
+}
+@media (max-width: 800px) {
+  .teacher-apply-hero {
+    border-radius: 18px;
+  }
+  .apply-hero-content {
+    flex-direction: column;
+    min-height: unset;
+  }
+  .apply-hero-icon {
+    width: 100%;
+    min-height: 120px;
+    font-size: 3rem;
+    border-radius: 18px 18px 0 0;
+  }
+  .apply-hero-text {
+    padding: 24px 16px 24px 16px;
+  }
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0; top: 0; width: 100vw; height: 100vh;
+  background: rgba(30,41,59,0.25);
+  overflow: auto;
+}
+.modal-content {
+  background: #fff;
+  margin: 60px auto;
+  padding: 36px 28px 28px 28px;
+  border-radius: 16px;
+  max-width: 420px;
+  box-shadow: 0 8px 32px rgba(30,58,138,0.18);
+  position: relative;
+  animation: modalIn 0.25s;
+}
+@keyframes modalIn {
+  from { transform: translateY(-40px) scale(0.98); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+.close {
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  font-size: 2rem;
+  color: #64748b;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.close:hover { color: #3b82f6; }
+.application-form .form-group {
+  margin-bottom: 18px;
+}
+.application-form label {
+  font-weight: 500;
+  color: #1e293b;
+  margin-bottom: 6px;
+  display: block;
+}
+.application-form input, .application-form textarea {
+  width: 100%;
+  padding: 12px 10px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-top: 2px;
+  background: #f8fafc;
+  color: #1e293b;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.application-form input:focus, .application-form textarea:focus {
+  border-color: #3b82f6;
+  background: #fff;
+}
+.application-form button {
+  width: 100%;
+  background: #3b82f6;
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 0;
+  font-size: 1.08rem;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+.application-form button:hover {
+  background: #1e3a8a;
+} 
+
+/* Başvuru Modalı (Zarif ve Sade) */
+#teacherModal .modal-content {
+  background: #f8fafc;
+  margin: 60px auto;
+  padding: 28px 20px 20px 20px;
+  border-radius: 18px;
+  max-width: 370px;
+  box-shadow: 0 2px 16px rgba(30,58,138,0.08);
+  position: relative;
+  animation: modalIn 0.22s;
+  border: 1.5px solid #e0e7ef;
+}
+#teacherModal h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin-bottom: 18px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+#teacherModal .form-group label {
+  color: #334155;
+  font-size: 0.98rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+#teacherModal .form-group input,
+#teacherModal .form-group textarea {
+  background: #f1f5f9;
+  border: 1.2px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.98rem;
+  padding: 10px 8px;
+  margin-top: 2px;
+  color: #1e293b;
+  transition: border-color 0.2s;
+}
+#teacherModal .form-group input:focus,
+#teacherModal .form-group textarea:focus {
+  border-color: #3b82f6;
+  background: #fff;
+}
+#teacherModal .form-group textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+#teacherModal .form-group {
+  margin-bottom: 13px;
+}
+#teacherModal button[type="submit"] {
+  width: 100%;
+  background: linear-gradient(90deg, #3b82f6 0%, #1e3a8a 100%);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 0;
+  font-size: 1.05rem;
+  cursor: pointer;
+  margin-top: 8px;
+  box-shadow: 0 1px 6px rgba(30,58,138,0.07);
+  transition: background 0.18s, transform 0.13s;
+}
+#teacherModal button[type="submit"]:hover {
+  background: #1e3a8a;
+  color: #fff;
+  transform: scale(1.03);
+}
+#teacherModal .close {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  font-size: 1.5rem;
+  color: #64748b;
+  cursor: pointer;
+  transition: color 0.18s;
+}
+#teacherModal .close:hover { color: #3b82f6; }
+
+/* Başvuru butonu daha zarif */
+.apply-hero-btn {
+  background: #f8fafc;
+  color: #1e3a8a;
+  font-weight: 600;
+  border: 1.5px solid #3b82f6;
+  border-radius: 8px;
+  padding: 12px 28px;
+  font-size: 1.05rem;
+  cursor: pointer;
+  box-shadow: 0 1px 6px rgba(30,58,138,0.07);
+  transition: background 0.18s, color 0.18s, border 0.18s, transform 0.13s;
+}
+.apply-hero-btn:hover {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #1e3a8a;
+  transform: scale(1.04);
 } 
