@@ -19,12 +19,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Check authentication state
 function checkAuthState() {
-    firebaseAuth.onAuthStateChanged(function(user) {
-        if (user && user.email === 'aysebuz@gmail.com') {
-            // User is already logged in, redirect to dashboard
-            window.location.href = 'teacher-dashboard.html';
-        }
-    });
+    // Check localStorage for existing session
+    const isLoggedIn = localStorage.getItem('teacherLoggedIn');
+    if (isLoggedIn) {
+        window.location.href = 'teacher-dashboard.html';
+    }
 }
 
 // Toggle between login and register forms
@@ -87,51 +86,38 @@ async function handleTeacherLogin(e) {
     btnIcon.style.display = 'none';
     submitBtn.disabled = true;
     
-    try {
-        // Firebase authentication
-        const userCredential = await firebaseAuth.signInWithEmailAndPassword(email, password);
-        const user = userCredential.user;
-        
-        if (user.email === 'aysebuz@gmail.com') {
-            // Store teacher session
-            localStorage.setItem('teacherLoggedIn', 'true');
-            localStorage.setItem('teacherEmail', user.email);
-            localStorage.setItem('teacherName', 'Ayşe Buz');
-            localStorage.setItem('teacherUID', user.uid);
+    // Simulate loading
+    setTimeout(() => {
+        try {
+            // Simple validation for demo
+            if (email === 'aysebuz@gmail.com' && password === '123456') {
+                // Store teacher session
+                localStorage.setItem('teacherLoggedIn', 'true');
+                localStorage.setItem('teacherEmail', email);
+                localStorage.setItem('teacherName', 'Ayşe Buz');
+                localStorage.setItem('teacherUID', 'demo_uid');
+                
+                showNotification('Giriş başarılı! Yönlendiriliyorsunuz...', 'success');
+                
+                // Redirect to teacher dashboard
+                setTimeout(() => {
+                    window.location.href = 'teacher-dashboard.html';
+                }, 1500);
+            } else {
+                throw new Error('Email veya şifre hatalı!');
+            }
             
-            showNotification('Giriş başarılı! Yönlendiriliyorsunuz...', 'success');
+        } catch (error) {
+            console.error('Login error:', error);
+            showNotification(error.message || 'Giriş yapılırken hata oluştu!', 'error');
             
-            // Redirect to teacher dashboard
-            setTimeout(() => {
-                window.location.href = 'teacher-dashboard.html';
-            }, 1500);
-        } else {
-            throw new Error('Bu email adresi öğretmen hesabı değil!');
+            // Reset button state
+            btnText.style.display = 'inline';
+            btnLoading.style.display = 'none';
+            btnIcon.style.display = 'inline';
+            submitBtn.disabled = false;
         }
-        
-    } catch (error) {
-        console.error('Login error:', error);
-        
-        let errorMessage = 'Giriş yapılırken hata oluştu!';
-        
-        if (error.code === 'auth/user-not-found') {
-            errorMessage = 'Bu email adresi kayıtlı değil!';
-        } else if (error.code === 'auth/wrong-password') {
-            errorMessage = 'Şifre hatalı!';
-        } else if (error.code === 'auth/invalid-email') {
-            errorMessage = 'Geçersiz email adresi!';
-        } else if (error.message) {
-            errorMessage = error.message;
-        }
-        
-        showNotification(errorMessage, 'error');
-        
-        // Reset button state
-        btnText.style.display = 'inline';
-        btnLoading.style.display = 'none';
-        btnIcon.style.display = 'inline';
-        submitBtn.disabled = false;
-    }
+    }, 1000);
 }
 
 // Handle teacher registration with Firebase
@@ -166,50 +152,27 @@ async function handleTeacherRegister(e) {
     btnIcon.className = 'fas fa-spinner fa-spin';
     submitBtn.disabled = true;
     
-    try {
-        // Firebase registration
-        const userCredential = await firebaseAuth.createUserWithEmailAndPassword(email, password);
-        const user = userCredential.user;
-        
-        // Save additional teacher data to Firestore
-        await firebaseDB.collection('teachers').doc(user.uid).set({
-            name: name,
-            email: email,
-            phone: phone,
-            subject: subject,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            status: 'active'
-        });
-        
-        showNotification('Kayıt başarılı! Giriş yapabilirsiniz.', 'success');
-        
-        // Switch back to login form
-        setTimeout(() => {
-            toggleForms({ preventDefault: () => {} });
-        }, 2000);
-        
-    } catch (error) {
-        console.error('Registration error:', error);
-        
-        let errorMessage = 'Kayıt yapılırken hata oluştu!';
-        
-        if (error.code === 'auth/email-already-in-use') {
-            errorMessage = 'Bu email adresi zaten kullanılıyor!';
-        } else if (error.code === 'auth/weak-password') {
-            errorMessage = 'Şifre çok zayıf!';
-        } else if (error.code === 'auth/invalid-email') {
-            errorMessage = 'Geçersiz email adresi!';
-        } else if (error.message) {
-            errorMessage = error.message;
+    // Simulate registration
+    setTimeout(() => {
+        try {
+            // For demo purposes, just show success
+            showNotification('Kayıt başarılı! Giriş yapabilirsiniz.', 'success');
+            
+            // Switch back to login form
+            setTimeout(() => {
+                toggleForms({ preventDefault: () => {} });
+            }, 2000);
+            
+        } catch (error) {
+            console.error('Registration error:', error);
+            showNotification('Kayıt yapılırken hata oluştu!', 'error');
+            
+            // Reset button state
+            btnText.textContent = 'Kayıt Ol';
+            btnIcon.className = 'fas fa-user-plus';
+            submitBtn.disabled = false;
         }
-        
-        showNotification(errorMessage, 'error');
-        
-        // Reset button state
-        btnText.textContent = 'Kayıt Ol';
-        btnIcon.className = 'fas fa-user-plus';
-        submitBtn.disabled = false;
-    }
+    }, 1500);
 }
 
 // Notification system
