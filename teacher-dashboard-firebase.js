@@ -13,15 +13,14 @@ let currentTeacher = null;
 
 // Initialize dashboard with Firebase
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if teacher is logged in
-    checkTeacherAuth();
-    
+    // Initialize UI components first
     initializeNavigation();
     initializeContentTabs();
     initializeUploadModal();
     initializeAnalytics();
-    loadTeacherContent();
-    loadStudents();
+    
+    // Check if teacher is logged in
+    checkTeacherAuth();
 });
 
 // Check teacher authentication with Firebase
@@ -37,6 +36,10 @@ function checkTeacherAuth() {
             
             // Update UI with teacher info
             updateTeacherInfo();
+            
+            // Load content after authentication
+            loadTeacherContent();
+            loadStudents();
         } else {
             // Check localStorage as fallback
             const isLoggedIn = localStorage.getItem('teacherLoggedIn');
@@ -49,6 +52,10 @@ function checkTeacherAuth() {
                     uid: localStorage.getItem('teacherUID') || 'demo_uid'
                 };
                 updateTeacherInfo();
+                
+                // Load content after authentication
+                loadTeacherContent();
+                loadStudents();
             } else {
                 // Not authenticated, redirect to login
                 window.location.href = 'teacher-login.html';
