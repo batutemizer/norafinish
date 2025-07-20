@@ -24,21 +24,24 @@ document.addEventListener('DOMContentLoaded', function() {
     loadStudents();
 });
 
-// Check teacher authentication
+// Check teacher authentication with Firebase
 function checkTeacherAuth() {
-    const isLoggedIn = localStorage.getItem('teacherLoggedIn');
-    if (!isLoggedIn) {
-        window.location.href = 'teacher-login.html';
-        return;
-    }
-    
-    currentTeacher = {
-        email: localStorage.getItem('teacherEmail'),
-        name: localStorage.getItem('teacherName')
-    };
-    
-    // Update UI with teacher info
-    updateTeacherInfo();
+    firebaseAuth.onAuthStateChanged(function(user) {
+        if (user && user.email === 'aysebuz@gmail.com') {
+            // Teacher is authenticated
+            currentTeacher = {
+                email: user.email,
+                name: 'Ayşe Buz',
+                uid: user.uid
+            };
+            
+            // Update UI with teacher info
+            updateTeacherInfo();
+        } else {
+            // Not authenticated, redirect to login
+            window.location.href = 'teacher-login.html';
+        }
+    });
 }
 
 // Update teacher info in UI
@@ -52,14 +55,65 @@ function updateTeacherInfo() {
 // Firebase: Load teacher content
 async function loadTeacherContent() {
     try {
-        // For demo purposes, we'll use localStorage
-        // In real implementation, this would fetch from Firebase
+        // Load from Firebase Firestore
+        const contentSnapshot = await firebaseDB.collection('content')
+            .where('teacherId', '==', currentTeacher.email)
+            .orderBy('createdAt', 'desc')
+            .get();
+        
+        // Reset content arrays
+        teacherContent = {
+            videos: [],
+            quizzes: [],
+            assignments: [],
+            materials: []
+        };
+        
+        // Process Firebase documents
+        contentSnapshot.forEach(doc => {
+            const content = {
+                id: doc.id,
+                ...doc.data()
+            };
+            
+            // Convert timestamp to string for localStorage
+            if (content.createdAt) {
+                content.createdAt = content.createdAt.toDate().toISOString();
+            }
+            
+            const contentKey = `${content.type}s`;
+            if (teacherContent[contentKey]) {
+                teacherContent[contentKey].push(content);
+            }
+        });
+        
+        // If no content found, load demo content
+        if (teacherContent.videos.length === 0 && 
+            teacherContent.quizzes.length === 0 && 
+            teacherContent.assignments.length === 0 && 
+            teacherContent.materials.length === 0) {
+            loadDemoContent();
+        }
+        
+        // Save to localStorage for offline access
+        localStorage.setItem('teacherContent', JSON.stringify(teacherContent));
+        
+        // Render content
+        renderContent('videos', teacherContent.videos);
+        renderContent('quizzes', teacherContent.quizzes);
+        renderContent('assignments', teacherContent.assignments);
+        renderContent('materials', teacherContent.materials);
+        
+    } catch (error) {
+        console.error('Error loading content:', error);
+        
+        // Fallback to localStorage
         const savedContent = localStorage.getItem('teacherContent');
         if (savedContent) {
             teacherContent = JSON.parse(savedContent);
         }
         
-        // Load demo content if empty
+        // Load demo content if still empty
         if (teacherContent.videos.length === 0) {
             loadDemoContent();
         }
@@ -70,9 +124,7 @@ async function loadTeacherContent() {
         renderContent('assignments', teacherContent.assignments);
         renderContent('materials', teacherContent.materials);
         
-    } catch (error) {
-        console.error('Error loading content:', error);
-        showNotification('İçerik yüklenirken hata oluştu!', 'error');
+        showNotification('İçerik yüklenirken hata oluştu! Offline modda çalışıyor.', 'warning');
     }
 }
 
@@ -138,20 +190,29 @@ async function loadStudents() {
 // Firebase: Save content
 async function saveContent(content) {
     try {
+        // Add teacher info to content
+        const contentWithTeacher = {
+            ...content,
+            teacherId: currentTeacher.email,
+            teacherUID: currentTeacher.uid,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            status: 'active'
+        };
+        
+        // Save to Firebase Firestore
+        const docRef = await firebaseDB.collection('content').add(contentWithTeacher);
+        
+        // Add Firebase document ID to content
+        content.id = docRef.id;
+        
+        // Update local array
         const contentKey = `${content.type}s`;
         if (teacherContent[contentKey]) {
             teacherContent[contentKey].push(content);
         }
         
-        // Save to localStorage (in real implementation, save to Firebase)
+        // Save to localStorage for offline access
         localStorage.setItem('teacherContent', JSON.stringify(teacherContent));
-        
-        // In real Firebase implementation:
-        // await db.collection('content').add({
-        //     ...content,
-        //     teacherId: currentTeacher.email,
-        //     createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        // });
         
         showNotification(`${getTypeName(content.type)} başarıyla kaydedildi!`, 'success');
         
@@ -428,20 +489,31 @@ function sendContentToSelectedStudents(contentId, contentType) {
     document.querySelector('.modal').remove();
 }
 
-// Logout functionality
-document.getElementById('logoutBtn').addEventListener('click', (e) => {
+// Logout functionality with Firebase
+document.getElementById('logoutBtn').addEventListener('click', async (e) => {
     e.preventDefault();
     
     if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
-        // Clear teacher session
-        localStorage.removeItem('teacherLoggedIn');
-        localStorage.removeItem('teacherEmail');
-        localStorage.removeItem('teacherName');
-        
-        // In real Firebase implementation:
-        // firebaseAuth.signOut();
-        
-        window.location.href = 'index.html';
+        try {
+            // Firebase sign out
+            await firebaseAuth.signOut();
+            
+            // Clear teacher session
+            localStorage.removeItem('teacherLoggedIn');
+            localStorage.removeItem('teacherEmail');
+            localStorage.removeItem('teacherName');
+            localStorage.removeItem('teacherUID');
+            
+            showNotification('Başarıyla çıkış yapıldı!', 'success');
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+            
+        } catch (error) {
+            console.error('Logout error:', error);
+            showNotification('Çıkış yapılırken hata oluştu!', 'error');
+        }
     }
 });
 

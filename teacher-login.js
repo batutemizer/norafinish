@@ -1,13 +1,26 @@
-// Teacher Login JavaScript
+// Teacher Login JavaScript with Firebase
 
 document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('teacherLoginForm');
     
     loginForm.addEventListener('submit', handleTeacherLogin);
+    
+    // Check if user is already logged in
+    checkAuthState();
 });
 
-// Handle teacher login
-function handleTeacherLogin(e) {
+// Check authentication state
+function checkAuthState() {
+    firebaseAuth.onAuthStateChanged(function(user) {
+        if (user && user.email === 'aysebuz@gmail.com') {
+            // User is already logged in, redirect to dashboard
+            window.location.href = 'teacher-dashboard.html';
+        }
+    });
+}
+
+// Handle teacher login with Firebase
+async function handleTeacherLogin(e) {
     e.preventDefault();
     
     const email = document.getElementById('teacherEmail').value;
@@ -22,13 +35,17 @@ function handleTeacherLogin(e) {
     btnLoading.style.display = 'inline-flex';
     submitBtn.disabled = true;
     
-    // Simulate login process
-    setTimeout(() => {
-        if (validateTeacherCredentials(email, password)) {
+    try {
+        // Firebase authentication
+        const userCredential = await firebaseAuth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        if (user.email === 'aysebuz@gmail.com') {
             // Store teacher session
             localStorage.setItem('teacherLoggedIn', 'true');
-            localStorage.setItem('teacherEmail', email);
+            localStorage.setItem('teacherEmail', user.email);
             localStorage.setItem('teacherName', 'Ayşe Buz');
+            localStorage.setItem('teacherUID', user.uid);
             
             showNotification('Giriş başarılı! Yönlendiriliyorsunuz...', 'success');
             
@@ -37,23 +54,31 @@ function handleTeacherLogin(e) {
                 window.location.href = 'teacher-dashboard.html';
             }, 1500);
         } else {
-            showNotification('Email veya şifre hatalı!', 'error');
-            
-            // Reset button state
-            btnText.style.display = 'inline';
-            btnLoading.style.display = 'none';
-            submitBtn.disabled = false;
+            throw new Error('Bu email adresi öğretmen hesabı değil!');
         }
-    }, 1000);
-}
-
-// Validate teacher credentials
-function validateTeacherCredentials(email, password) {
-    // Demo credentials
-    const validEmail = 'aysebuz@gmail.com';
-    const validPassword = '123456';
-    
-    return email === validEmail && password === validPassword;
+        
+    } catch (error) {
+        console.error('Login error:', error);
+        
+        let errorMessage = 'Giriş yapılırken hata oluştu!';
+        
+        if (error.code === 'auth/user-not-found') {
+            errorMessage = 'Bu email adresi kayıtlı değil!';
+        } else if (error.code === 'auth/wrong-password') {
+            errorMessage = 'Şifre hatalı!';
+        } else if (error.code === 'auth/invalid-email') {
+            errorMessage = 'Geçersiz email adresi!';
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+        
+        showNotification(errorMessage, 'error');
+        
+        // Reset button state
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+        submitBtn.disabled = false;
+    }
 }
 
 // Toggle password visibility
